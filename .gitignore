@@ -1,1 +1,3 @@
+venv/
+.env
 googlemaps_api_notes.txt
