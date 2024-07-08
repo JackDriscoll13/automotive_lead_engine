@@ -8,21 +8,26 @@ def get_carwash_json(api_key:str, region:str):
     headers = {
         'Content-Type': 'application/json',
         'X-Goog-Api-Key': api_key,  
-        'X-Goog-FieldMask': 'places.displayName,places.formattedAddress,places.priceLevel'
+        'X-Goog-FieldMask': '*',
     }
 
     # Define the JSON payload
     payload = {
-        "textQuery": f"All call washes and car detailing in {region}"
+        "textQuery": f"All call washes and car detailing in {region}",
+        "pageSize": 1
     }
 
     # Send the Post request
     response = requests.post(endpoint, json=payload, headers=headers)
+    print(response.text)
     # Check for successful response
     if response.status_code == 200:
         # Parse the JSON response
         data = response.json()
-        print(data)
+        #print(data)
+        # Print the number of places
+        # number_of_places = len(data['places'])
+        # print(f"Number of places returned: {number_of_places}")
     else:
         print(f"Error: {response.status_code}")
         print(response.text)
@@ -44,6 +49,6 @@ if __name__ == "__main__":
         raise ValueError("No API key found. Please set the GOOGLE_MAPS_API_KEY environment variable in the .env file.")
 
     # Test the function 
-    response = get_carwash_json(API_KEY, 'San Francisco')
+    response = get_carwash_json(API_KEY, 'San Francisco, CA')
     
     
