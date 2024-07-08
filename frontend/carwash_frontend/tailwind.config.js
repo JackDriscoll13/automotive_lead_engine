@@ -7,8 +7,7 @@ export default {
   theme: {
     extend: {
       colors: {
-        charcoal: '#303030', // Adjust the color as needed
-        'dark-charcoal': '#1A1A1A', // Adjust the color as needed
+        charcoal: '#303030', // Adjust the color as needed// Adjust the color as needed
       },
     },
   },
