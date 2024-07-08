@@ -6,12 +6,35 @@ import './index.css'
 const App = () => {
   const [location, setLocation] = useState('');
   const [results, setResults] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Fetch data from backend here
-    // For now, we'll just set some dummy results
-    setResults({ data: 'Sample data for ' + location });
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const response = await fetch('http://0.0.0.0:8000/search_carwashes', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({region: location}),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      setResults(data);
+    } catch (error) {
+      setError('Failed to fetch car washes. Please try again.');
+      console.error('There was a problem with the fetch operation:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const exportCSV = () => {
@@ -45,13 +68,15 @@ const App = () => {
             </button>
           </div>
         </form>
-
-        {results && (
-          <div className="max-w-2xl mx-auto bg-white shadow-lg rounded px-8 pt-6 pb-8 mb-4">
-            <h2 className="text-xl font-bold mb-4 text-charcoal">Results:</h2>
-            <pre className="bg-gray-100 p-4 rounded text-sm text-gray-700 overflow-x-auto">
-              {JSON.stringify(results, null, 2)}
-            </pre>
+        {isLoading && <p className="text-center">Loading...</p>}
+        {error && <p className="text-center text-red-500">{error}</p>}
+      
+      {results && (
+        <div className="max-w-2xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <h2 className="text-xl font-bold mb-4 text-charcoal">Results:</h2>
+          <pre className="bg-gray-100 p-4 rounded text-sm text-gray-700 overflow-x-auto">
+            {JSON.stringify(results, null, 2)}
+          </pre>
             <button
               onClick={exportCSV}
               className="mt-6 bg-charcoal hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
