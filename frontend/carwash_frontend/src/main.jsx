@@ -23,13 +23,13 @@ const App = () => {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-charcoal text-white p-6 shadow-md">
         <div className="container mx-auto">
-          <h1 className="text-3xl font-semibold">Location Data Fetcher</h1>
+          <h1 className="text-3xl font-semibold">Chris's Car Wash Finder</h1>
         </div>
       </header>
 
       <main className="container mx-auto mt-12 p-4">
         <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-12">
-          <div className="flex items-center border-b-2 border-charcoal py-2">
+          <div className="flex items-center border-b-2 border-charcoal py-2 shadow-md">
             <input
               type="text"
               value={location}
@@ -41,13 +41,13 @@ const App = () => {
               type="submit"
               className="flex-shrink-0 bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700 text-sm border-4 text-white py-1 px-2 rounded"
             >
-              Fetch Data
+              Search Car Washes
             </button>
           </div>
         </form>
 
         {results && (
-          <div className="max-w-2xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
+          <div className="max-w-2xl mx-auto bg-white shadow-lg rounded px-8 pt-6 pb-8 mb-4">
             <h2 className="text-xl font-bold mb-4 text-charcoal">Results:</h2>
             <pre className="bg-gray-100 p-4 rounded text-sm text-gray-700 overflow-x-auto">
               {JSON.stringify(results, null, 2)}
