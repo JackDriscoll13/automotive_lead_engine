@@ -38,7 +38,6 @@ const App = () => {
     } finally {
       setIsLoading(false);
       setResultsLabel(location);
-      set
     }
   };
 
@@ -68,7 +67,7 @@ const App = () => {
   const downloadCSV = () => {
     if (!results) return;
 
-    const csv = convertToCSV(results);
+    const csv = convertToCSV(results.results);
     const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
     const link = document.createElement('a');
     // Format the Results label (first word in location + _carwashes.csv) (special characters removed)
@@ -93,9 +92,9 @@ const App = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <header className="bg-charcoal text-white p-6 shadow-md">
+      <header className="bg-charcoal text-white p-4 shadow-md">
         <div className="container mx-auto">
-          <h1 className="text-3xl font-semibold">Chris's Car Wash Finder</h1>
+          <h1 className="text-2xl font-semibold">Chris's Car Wash Finder</h1>
         </div>
       </header>
 
@@ -122,7 +121,8 @@ const App = () => {
       
       {results && (
         <div className="max-w-2xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <h2 className="text-xl font-bold mb-4 text-charcoal">Results for "{resultsLabel}":</h2>
+          <h2 className="text-xl font-bold text-charcoal">Results for "{resultsLabel}":</h2>
+          <div className="text-xs mb-4">({results.num_results} carwashes/detailers returned in {results.exc_time} seconds)</div>
           <pre className="bg-gray-100 p-4 h-[55vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto">
             {JSON.stringify(results, null, 2)}
           </pre>

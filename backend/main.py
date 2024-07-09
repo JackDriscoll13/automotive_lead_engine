@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
 import os
+import time
 # Local Imports 
 from carwash_regional import get_all_car_washes
 
@@ -34,5 +35,9 @@ if not GOOGLE_API_KEY:
 @app.post("/search_carwashes")
 def search_carwashes(request: SearchCarwashesRequest):
     """Get a list of car washes in a region"""
+    start_time = time.time()
     car_washes = get_all_car_washes(GOOGLE_API_KEY, request.region)
-    return car_washes
+    num_results = len(car_washes)
+    total_time = round((time.time() - start_time), 2)
+
+    return {'results': car_washes, 'num_results': num_results, 'exc_time': total_time}
