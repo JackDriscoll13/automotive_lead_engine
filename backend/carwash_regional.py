@@ -17,7 +17,8 @@ def get_all_car_washes(api_key, region):
     
     all_car_washes = []
     next_page_token = None
-    
+    callcount = 0
+
     while True:
         if next_page_token:
             data["pageToken"] = next_page_token
@@ -30,18 +31,18 @@ def get_all_car_washes(api_key, region):
             car_wash = {
                 "name": place["displayName"]["text"],
                 "address": place.get("formattedAddress"),
-                "rating": place.get("rating"),
+                "goog_rating": place.get("rating"),
                 "phone": place.get("nationalPhoneNumber"),
                 "website": place.get("websiteUri"),
                 "lat": place["location"]["latitude"],
                 "lng": place["location"]["longitude"],
-                "id": place['id'], 
+                "goog_places_id": place['id'], 
             }
             all_car_washes.append(car_wash)
         
         next_page_token = results.get("nextPageToken")
-        
-        if not next_page_token:
+        callcount += 1
+        if not next_page_token or callcount > 3:
             break
         
         # Wait before making the next request (to comply with API usage limits)
@@ -58,9 +59,9 @@ if __name__ == "__main__":
     for car_wash in car_washes:
         print(f"Name: {car_wash['name']}")
         print(f"Address: {car_wash['address']}")
-        print(f"Rating: {car_wash['rating']}")
+        print(f"goog_rating: {car_wash['rating']}")
         print(f"Location: {car_wash['lat']}, {car_wash['lng']}")
-        print(f"ID: {car_wash['id']}")
+        print(f"goog_places_id: {car_wash['id']}")
         if car_wash["phone"]:
             print(f"Phone: {car_wash['phone']}")
         if car_wash["website"]:

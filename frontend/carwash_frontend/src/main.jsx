@@ -8,11 +8,14 @@ const App = () => {
   const [results, setResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [resultsLabel, setResultsLabel] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
+    setResults(null);
     setError(null);
+    setResultsLabel(null);
 
     try {
       const response = await fetch('http://0.0.0.0:8000/search_carwashes', {
@@ -34,12 +37,58 @@ const App = () => {
       console.error('There was a problem with the fetch operation:', error);
     } finally {
       setIsLoading(false);
+      setResultsLabel(location);
+      set
     }
   };
 
-  const exportCSV = () => {
-    // Implement CSV export logic here
-    console.log('Exporting CSV...');
+
+
+  const convertToCSV = (data) => {
+    if (!data || !data.length) return '';
+
+    const headers = Object.keys(data[0]);
+    const csvRows = [];
+
+    // Add headers
+    csvRows.push(headers.join(','));
+
+    // Add data
+    for (const row of data) {
+      const values = headers.map(header => {
+        const escaped = ('' + row[header]).replace(/"/g, '\\"');
+        return `"${escaped}"`;
+      });
+      csvRows.push(values.join(','));
+    }
+
+    return csvRows.join('\n');
+  };
+
+  const downloadCSV = () => {
+    if (!results) return;
+
+    const csv = convertToCSV(results);
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    // Format the Results label (first word in location + _carwashes.csv) (special characters removed)
+    function formatLabel(resultsLabel) {
+      if (resultsLabel) {
+        const firstWord = resultsLabel.split(' ')[0].replace(/[^a-zA-Z0-9]/g, '');
+        return `${firstWord}_carwashes.csv`;
+      }
+      return 'car_washes_carwashes.csv';
+    }
+    const fileLabel = formatLabel(resultsLabel);
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', fileLabel);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
@@ -50,7 +99,7 @@ const App = () => {
         </div>
       </header>
 
-      <main className="container mx-auto mt-12 p-4">
+      <main className="container mx-auto mt-6 p-4">
         <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-12">
           <div className="flex items-center border-b-2 border-charcoal py-2 shadow-md">
             <input
@@ -73,15 +122,15 @@ const App = () => {
       
       {results && (
         <div className="max-w-2xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-          <h2 className="text-xl font-bold mb-4 text-charcoal">Results:</h2>
-          <pre className="bg-gray-100 p-4 rounded text-sm text-gray-700 overflow-x-auto">
+          <h2 className="text-xl font-bold mb-4 text-charcoal">Results for "{resultsLabel}":</h2>
+          <pre className="bg-gray-100 p-4 h-[55vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto">
             {JSON.stringify(results, null, 2)}
           </pre>
-            <button
-              onClick={exportCSV}
-              className="mt-6 bg-charcoal hover:bg-gray-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
+              <button
+              onClick={downloadCSV}
+              className="mt-4 bg-charcoal hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
             >
-              Export as CSV
+              Download CSV
             </button>
           </div>
         )}
