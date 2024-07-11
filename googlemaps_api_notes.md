@@ -1,5 +1,14 @@
-Google maps notes and docs
+ENV VARS: 
 
+Connecting Backend and frontend
+- Default Backend URL (local): 'http://0.0.0.0:8000';
+- Lightsail Bakcend URL (deployed, https): 
+GOOGLE MAPS API KEY:
+GOOGLE_PLACES_API_KEY
+AIzaSyCLf6ZnBPM2HsiE-943gtHVkU8XNZRpn5s
+
+
+GOOGLE MAPS API NOTES AND DOCS
 
 - Google Account
 jackmacdriscoll@gmail.com
@@ -17,3 +26,4 @@ AIzaSyCLf6ZnBPM2HsiE-943gtHVkU8XNZRpn5s
 - We want to use a text search to search for car washes and detailers in a specific region
 
 - Limiting the number of fields we return
+

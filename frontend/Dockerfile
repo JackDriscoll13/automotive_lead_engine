@@ -10,6 +10,12 @@ COPY package*.json ./
 # Install dependencies
 RUN npm install
 
+# Specify the argument for the build-time environment variable
+ARG REACT_APP_BACKEND_URL
+
+# Set the environment variable so it's available to the build script
+ENV REACT_APP_BACKEND_URL=$REACT_APP_BACKEND_URL
+
 # Copy the rest of the application code into the container
 COPY . .
 

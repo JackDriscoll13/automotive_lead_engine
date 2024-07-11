@@ -19,7 +19,8 @@ const App = () => {
 
 
     try {
-      const backendUrl = process.env.BACKEND_URL; // Default URL
+      const backendUrl = "https://test-container-service2.t3nhl45ah0p46.us-east-1.cs.amazonlightsail.com:8000"
+      console.log("backendUrl: ", backendUrl)
       const response = await fetch(`${backendUrl}/search_carwashes`, {
         method: 'POST',
         headers: {
@@ -96,7 +97,7 @@ const App = () => {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-charcoal text-white p-4 shadow-md">
         <div className="container mx-auto">
-          <h1 className="text-2xl font-semibold">Chris's Car Wash Finder</h1>
+          <h1 className="text-2xl font-semibold">Jacks and Chris's Car Wash Finder</h1>
         </div>
       </header>
 
