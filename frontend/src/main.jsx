@@ -19,7 +19,7 @@ const App = () => {
 
 
     try {
-      const backendUrl = process.env.BACKEND_URL || 'http://0.0.0.0:8000'; // Default URL
+      const backendUrl = process.env.BACKEND_URL; // Default URL
       const response = await fetch(`${backendUrl}/search_carwashes`, {
         method: 'POST',
         headers: {
