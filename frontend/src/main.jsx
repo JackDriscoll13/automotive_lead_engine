@@ -17,8 +17,10 @@ const App = () => {
     setError(null);
     setResultsLabel(null);
 
+
     try {
-      const response = await fetch('http://0.0.0.0:8000/search_carwashes', {
+      const backendUrl = process.env.BACKEND_URL || 'http://0.0.0.0:8000'; // Default URL
+      const response = await fetch(`${backendUrl}/search_carwashes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
