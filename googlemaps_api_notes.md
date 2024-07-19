@@ -3,6 +3,7 @@ ENV VARS:
 Connecting Backend and frontend
 - Default Backend URL (local): 'http://0.0.0.0:8000';
 - Lightsail Bakcend URL (deployed, https): 
+- REACT_APP_BACKEND_URL: 
 GOOGLE MAPS API KEY:
 GOOGLE_PLACES_API_KEY
 AIzaSyCLf6ZnBPM2HsiE-943gtHVkU8XNZRpn5s
