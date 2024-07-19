@@ -1,5 +1,7 @@
 # Use an official node runtime as a parent image
 FROM node:14 AS build
+ARG REACT_APP_BACKEND_URL
+ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
 
 # Set the working directory in the container
 WORKDIR /app

@@ -5,8 +5,10 @@ import './index.css'
 
 const App = () => {
   console.log("this is a test")
-  const backendUrl = "https://carwash-backend:8000"
-  console.log("backendUrl: ", backendUrl)
+  const backendUrlTest = process.env.REACT_APP_BACKEND_URL;
+  console.log("backendUrlTest: ", backendUrlTest)
+  // const backendUrl = "https://carwash-backend:8000"
+  // console.log("backendUrl: ", backendUrl)
   const [location, setLocation] = useState('');
   const [results, setResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -22,7 +24,7 @@ const App = () => {
 
 
     try {
-      const response = await fetch(`${backendUrl}/search_carwashes`, {
+      const response = await fetch(`${backendUrlTest}/search_carwashes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
