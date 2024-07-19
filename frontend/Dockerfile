@@ -22,8 +22,6 @@ COPY . .
 # Build the Vite app
 RUN npm run build
 
-# Verify the build output
-RUN ls /app/dist
 
 # Use an official nginx image as the base image
 FROM nginx:alpine

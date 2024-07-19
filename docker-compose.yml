@@ -5,6 +5,8 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    environment:
+      - GOOGLE_MAPS_API_KEY=AIzaSyD8ztW4LX_5HD9Tg19Q13NXWmvGnP77UtE
     ports:
       - "8000:8000"
     volumes:

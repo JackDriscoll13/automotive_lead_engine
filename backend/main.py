@@ -28,13 +28,14 @@ app.add_middleware(
 load_dotenv()
 
 # Load the api key from dotenv:
-GOOGLE_API_KEY = os.getenv('GOOGLE_PLACES_API_KEY')
+GOOGLE_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 if not GOOGLE_API_KEY:
     raise ValueError("No API key found. Please set the GOOGLE_MAPS_API_KEY environment variable in the .env file.")
 
 @app.post("/search_carwashes")
 def search_carwashes(request: SearchCarwashesRequest):
     """Get a list of car washes in a region"""
+    print(f"api key: {GOOGLE_API_KEY}")
     start_time = time.time()
     car_washes = get_all_car_washes(GOOGLE_API_KEY, request.region)
     num_results = len(car_washes)
