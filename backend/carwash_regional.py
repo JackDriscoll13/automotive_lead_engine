@@ -50,22 +50,3 @@ def get_all_car_washes(api_key, region):
     
     return all_car_washes
 
-if __name__ == "__main__":
-    # Usage example
-    api_key = "AIzaSyCLf6ZnBPM2HsiE-943gtHVkU8XNZRpn5s"
-    region = "Long Island, NY"
-    car_washes = get_all_car_washes(api_key, region)
-
-    for car_wash in car_washes:
-        print(f"Name: {car_wash['name']}")
-        print(f"Address: {car_wash['address']}")
-        print(f"goog_rating: {car_wash['rating']}")
-        print(f"Location: {car_wash['lat']}, {car_wash['lng']}")
-        print(f"goog_places_id: {car_wash['id']}")
-        if car_wash["phone"]:
-            print(f"Phone: {car_wash['phone']}")
-        if car_wash["website"]:
-            print(f"Website: {car_wash['website']}")
-        print("---")
-
-    print(f"Total car washes found: {len(car_washes)}")

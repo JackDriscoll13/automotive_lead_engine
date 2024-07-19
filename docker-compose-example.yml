@@ -6,7 +6,7 @@ services:
       context: ./backend
       dockerfile: Dockerfile
     environment:
-      - GOOGLE_MAPS_API_KEY=AIzaSyD8ztW4LX_5HD9Tg19Q13NXWmvGnP77UtE
+      - GOOGLE_MAPS_API_KEY=YOUR_API_KEY
     ports:
       - "8000:8000"
     volumes:
@@ -17,7 +17,7 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     environment:
-      - backend_url=http://localhost:8000
+      - BACKEND_URL=YOUR_BACKEND_URL
     ports:
       - "80:80"
     volumes:
