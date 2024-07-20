@@ -5,7 +5,7 @@ import './index.css'
 
 const App = () => {
   console.log("this is a test")
-  const backendUrlTest = process.env.REACT_APP_BACKEND_URL;
+  const backendUrlTest = "http://44.202.206.168:8000";
   console.log("backendUrlTest: ", backendUrlTest)
   // const backendUrl = "https://carwash-backend:8000"
   // console.log("backendUrl: ", backendUrl)

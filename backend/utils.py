@@ -1,5 +1,33 @@
 # Utility functions for the backend
 
+import json
+import os
+from datetime import datetime
+
+def check_api_call_limit(api_key, limit=100):
+    filename = f"{api_key}_calls.json"
+    if not os.path.exists(filename):
+        data = {"count": 0, "last_reset": str(datetime.now().date())}
+    else:
+        with open(filename, "r") as file:
+            data = json.load(file)
+    
+    last_reset = datetime.strptime(data["last_reset"], "%Y-%m-%d").date()
+    if datetime.now().date() > last_reset:
+        data = {"count": 1, "last_reset": str(datetime.now().date())}
+    else:
+        if data["count"] >= limit:
+            return False
+        data["count"] += 1
+    
+    with open(filename, "w") as file:
+        json.dump(data, file)
+    
+    return True
+
+
+
+# Foor working retrieving secrets from AWS Secrets Manager
 # import boto3
 # from botocore.exceptions import ClientError
 

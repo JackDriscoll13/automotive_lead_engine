@@ -1,7 +1,6 @@
 # Use an official node runtime as a parent image
-FROM node:14 AS build
-ARG REACT_APP_BACKEND_URL
-ENV REACT_APP_BACKEND_URL=${REACT_APP_BACKEND_URL}
+FROM node:18 AS build
+
 
 # Set the working directory in the container
 WORKDIR /app
@@ -23,6 +22,8 @@ COPY . .
 
 # Build the Vite app
 RUN npm run build
+
+RUN ls
 
 
 # Use an official nginx image as the base image
