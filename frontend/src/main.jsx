@@ -5,7 +5,8 @@ import './index.css'
 
 const App = () => {
   console.log("this is a test")
-  const backendUrlTest = "http://44.202.206.168:8000";
+  const backendUrlTest = "http://localhost:8000";
+  // const backendUrlTest = "http://44.202.206.168:8000";
   console.log("backendUrlTest: ", backendUrlTest)
   // const backendUrl = "https://carwash-backend:8000"
   // console.log("backendUrl: ", backendUrl)
@@ -37,7 +38,14 @@ const App = () => {
       }
 
       const data = await response.json();
-      setResults(data);
+      // Check if the response data contains an error, set the error message accordingly
+      if (data.error) {
+        setError(data.error); 
+        setResults([data]); 
+      } else {
+        // No error, proceed to set the results
+        setResults(data);
+      }
     } catch (error) {
       setError('Failed to fetch car washes. Please try again.');
       console.error('There was a problem with the fetch operation:', error);

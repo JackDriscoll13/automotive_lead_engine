@@ -2,3 +2,5 @@ venv/
 .env
 googlemaps_api_notes.txt
 docker-compose.yml
+
+__pycache__/

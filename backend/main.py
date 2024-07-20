@@ -6,7 +6,7 @@ import os
 import time
 # Local Imports 
 from carwash_regional import get_all_car_washes
-
+from utils import check_api_call_limit
 # 
 from pydantic import BaseModel
 
@@ -35,7 +35,9 @@ if not GOOGLE_API_KEY:
 @app.post("/search_carwashes")
 def search_carwashes(request: SearchCarwashesRequest):
     """Get a list of car washes in a region"""
-    print(f"api key: {GOOGLE_API_KEY}")
+    # print(f"api key: {GOOGLE_API_KEY}")
+    if not check_api_call_limit("Google Maps API", limit=5):
+        return {"error": "API call limit reached. Please try again tomorrow."}
     start_time = time.time()
     car_washes = get_all_car_washes(GOOGLE_API_KEY, request.region)
     num_results = len(car_washes)
