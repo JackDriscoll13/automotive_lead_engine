@@ -108,7 +108,7 @@ const App = () => {
     <div className="min-h-screen bg-gray-100">
       <header className="bg-charcoal text-white p-4 shadow-md">
         <div className="container mx-auto">
-          <h1 className="text-2xl font-semibold">Jacks and Chris's Car Wash Finder</h1>
+          <h1 className="text-2xl font-semibold">Chris's Car Wash Finder</h1>
         </div>
       </header>
 
@@ -140,12 +140,14 @@ const App = () => {
           <pre className="bg-gray-100 p-4 h-[55vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto">
             {JSON.stringify(results, null, 2)}
           </pre>
+            {!error && (
               <button
-              onClick={downloadCSV}
-              className="mt-4 bg-charcoal hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
-            >
-              Download CSV
-            </button>
+                onClick={downloadCSV}
+                className="mt-4 bg-charcoal hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+              >
+                Download CSV
+              </button>
+            )}
           </div>
         )}
       </main>
