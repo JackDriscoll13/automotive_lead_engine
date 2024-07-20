@@ -36,11 +36,13 @@ if not GOOGLE_API_KEY:
 def search_carwashes(request: SearchCarwashesRequest):
     """Get a list of car washes in a region"""
     # print(f"api key: {GOOGLE_API_KEY}")
-    if not check_api_call_limit("Google Maps API", limit=5):
-        return {"error": "API call limit reached. Please try again tomorrow."}
     start_time = time.time()
-    car_washes = get_all_car_washes(GOOGLE_API_KEY, request.region)
-    num_results = len(car_washes)
-    total_time = round((time.time() - start_time), 2)
+    car_washes_result = get_all_car_washes(GOOGLE_API_KEY, request.region)
+    if "error" in car_washes_result:
+        # Return or handle the error message as needed for the frontend
+        return car_washes_result
+    else: 
+        num_results = len(car_washes_result)
+        total_time = round((time.time() - start_time), 2)
 
-    return {'results': car_washes, 'num_results': num_results, 'exc_time': total_time}
+        return {'results': car_washes_result, 'num_results': num_results, 'exc_time': total_time}

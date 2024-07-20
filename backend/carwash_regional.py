@@ -1,7 +1,10 @@
 import requests
 import time
+from utils import check_api_call_limit
 
 def get_all_car_washes(api_key, region):
+    """ Primary function to ping the google places API and get all car washes in a region """
+
     base_url = "https://places.googleapis.com/v1/places:searchText"
     
     headers = {
@@ -20,6 +23,12 @@ def get_all_car_washes(api_key, region):
     callcount = 0
 
     while True:
+        # Check API call limit before making the next request
+        success, message, counts = check_api_call_limit("google_maps_api_key", daily_limit=10, monthly_limit=30)
+        if not success:
+            print(f"Limit exceeded: {message}. Total calls: {counts['total_calls']}, Monthly calls: {counts['monthly_calls']}, Daily calls: {counts['daily_calls']}.")
+            return {"error": f"Limit exceeded: {message}. Total calls: {counts['total_calls']}, Monthly calls: {counts['monthly_calls']}, Daily calls: {counts['daily_calls']}."}
+
         if next_page_token:
             data["pageToken"] = next_page_token
         
