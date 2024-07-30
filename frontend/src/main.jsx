@@ -1,14 +1,14 @@
 import React, {useState, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
+
 import './index.css'
 
 
 const App = () => {
   console.log("this is a test")
-  const backendUrlTest = "http://localhost:8000";
-  // const backendUrlTest = "http://44.202.206.168:8000";
+  //const backendUrlTest = "http://localhost:8000";
+  const backendUrlTest = "http://54.160.156.192:8000";
   console.log("backendUrlTest: ", backendUrlTest)
-  // const backendUrl = "https://carwash-backend:8000"
   // console.log("backendUrl: ", backendUrl)
   const [location, setLocation] = useState('');
   const [results, setResults] = useState(null);
