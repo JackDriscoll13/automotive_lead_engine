@@ -4,7 +4,7 @@ import json
 import os
 from datetime import datetime
 
-def check_api_call_limit(api_key, daily_limit=100, monthly_limit=300):
+def check_api_call_limit(api_key, daily_limit=800, monthly_limit=5800):
     filename = f"{api_key}_calls.json"
     current_date = datetime.now().date()
     current_month = datetime.now().month

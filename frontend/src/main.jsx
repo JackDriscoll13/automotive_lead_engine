@@ -7,8 +7,9 @@ import './index.css'
 const App = () => {
   console.log("this is a test")
   //const backendUrlTest = "http://localhost:8000";
-  const backendUrlTest = "http://54.160.156.192:8000";
-  console.log("backendUrlTest: ", backendUrlTest)
+  const backendUrl = "/api";
+// Then use it like:
+  console.log("backendUrl: ", backendUrl)
   // console.log("backendUrl: ", backendUrl)
   const [location, setLocation] = useState('');
   const [results, setResults] = useState(null);
@@ -25,7 +26,7 @@ const App = () => {
 
 
     try {
-      const response = await fetch(`${backendUrlTest}/search_carwashes`, {
+      const response = await fetch(`${backendUrl}/search_carwashes`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
