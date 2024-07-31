@@ -14,16 +14,22 @@ class SearchCarwashesRequest(BaseModel):
     region: str
 
 
-
-
 app = FastAPI()
+
+# Define allowed origins
+allowed_origins = [
+    "https://qfresheners.com",
+    "https://www.qfresheners.com",
+    # Include your local development URL if needed, e.g.:
+    # "http://localhost:3000",
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # My frontend url (localhost )
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify the HTTP methods you want to allow
+    allow_headers=["*"],  # You might want to restrict this to specific headers
 )
 load_dotenv()
 
