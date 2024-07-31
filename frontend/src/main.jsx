@@ -7,7 +7,7 @@ import './index.css'
 const App = () => {
   console.log("this is a test")
   //const backendUrlTest = "http://localhost:8000";
-  const backendUrlTest = "http://54.160.156.192:8000";
+  const backendUrlTest = "https://backend:8000";
   console.log("backendUrlTest: ", backendUrlTest)
   // console.log("backendUrl: ", backendUrl)
   const [location, setLocation] = useState('');
