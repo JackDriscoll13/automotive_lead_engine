@@ -5,12 +5,9 @@ import './index.css'
 
 
 const App = () => {
-  console.log("this is a test")
-  //const backendUrlTest = "http://localhost:8000";
   const backendUrl = "/api";
 // Then use it like:
-  console.log("backendUrl: ", backendUrl)
-  // console.log("backendUrl: ", backendUrl)
+  console.log("Test backendUrl: ", backendUrl)
   const [location, setLocation] = useState('');
   const [results, setResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
