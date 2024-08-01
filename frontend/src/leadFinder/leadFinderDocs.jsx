@@ -7,12 +7,17 @@ const LeadFinderDocs = () => {
             <p className="text-gray-700 mt-4">
                 This Lead Generator application is a tool that allows you to search for car washes and car detail shops in a given location. 
                 The application is divided into two main sections: General Location Search and Zip Code Search. 
-                The General Location Search allows users to search for car washes by entering a location (town, city, state, even zip code). 
+                The General Location Search allows users to search for car washes by entering a location (town, city, state, even zip code).    
                 The Zip Code Search specifically enables users to search for car washes by entering a zip code or a list of zip codes. 
+            </p>
+            <p className="text-gray-700 mt-4">
                 The application uses the Google Places API to fetch car wash data based on the user's search query. 
                 The fetched data is then displayed in a json format, which includes the name, address, and phone number of each car wash. 
                 Users can download the search results in CSV format by clicking on the "Download CSV" button. 
                 This puts the search results into a clean list of leads that can be viewed in excel or imported into a CRM system.
+
+              </p>
+            <p className="text-gray-700 mt-4">  
                 The application is still under development, and more features will be added in the future and as the needs of the business change.
             </p>
             <h3 className="text-xl font-semibold mt-6">General Location Search</h3>
@@ -32,7 +37,7 @@ const LeadFinderDocs = () => {
                 When complete, this feature will allow users to search for car washes by zip code and by a list of zip codes. 
                 This will enable better precision allow for a more targeted and organized lead generation process.
             </p>
-            <h3 className="text-xl font-semibold mt-6">Application Limitiations</h3>
+            <h3 className="text-xl font-semibold mt-6">Limitiations</h3>
             <p className="text-gray-700 mt-4">
                 At the time of writing, the Google Places API limits the number of search results to 20. 
                 However, the application is designed to handle pagination and fetch more results if available. 
@@ -41,6 +46,11 @@ const LeadFinderDocs = () => {
             <p className="text-gray-700 mt-4">
                 Also, the Google Places API is not free! For this reason, the application is limited to a specific number of requests per day and per month.
                 </p>
+            <h3 className="text-xl font-semibold mt-6">Implications for Future Work</h3>
+            <p className="text-gray-700 mt-4">
+               As the business scales, it will likley make sense to use the base code of this application to build a robust dataset of all the carwashes and car detailers present in the united states.
+               That will likley incur a cost if using the google API, but it will provide a more comprehensive and resolute list of leads. 
+            </p>
         </div>
     );
 }; 

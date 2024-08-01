@@ -11,8 +11,11 @@ import LeadFinderDocs from './leadFinderDocs';
 const Header = () => {
   return (
     <header className="bg-charcoal text-white p-4 shadow-md">
-      <div className="container mx-auto">
+      <div className="flex container mx-auto justify-between">
         <h1 className="text-2xl font-semibold">Car Wash Lead Generator</h1>
+        <a href="/home" className="text-xl font-semibold hover:underline">
+          Qfresheners.com
+        </a>
       </div>
     </header>
   );
