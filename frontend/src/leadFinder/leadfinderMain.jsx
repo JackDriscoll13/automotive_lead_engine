@@ -2,8 +2,11 @@ import React, {useState, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import '../index.css'
 
+// Importing 3 main components
 import SearchByLocation from './leadFinderLocation';
 import SearchByZipcodes from './leadFinderZipcodes';
+import LeadFinderDocs from './leadFinderDocs';
+
 // Header component for the Application 
 const Header = () => {
   return (
@@ -44,7 +47,7 @@ const Tab = ({ children }) => {
 };
 
 
-// The Main
+// The Main component for the LeadFinder Application
 const LeadFinder = () => {
     const backendUrl = "/api";
    
@@ -61,7 +64,7 @@ const LeadFinder = () => {
                 <SearchByZipcodes backendUrl={backendUrl}/>
               </Tab>
               <Tab label="Usage Guide & Documentation">
-                {/* Add your UsageGuide component here */}
+                <LeadFinderDocs/>
               </Tab>
             </Tabs>
           </main>
