@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import './index.css'
 
 // The first leadfinder application
-const LeadFinder1 = () => {
+const LeadFinder = () => {
     const backendUrl = "/api";
     // Then use it like:
     console.log("Test backendUrl: ", backendUrl)
@@ -152,4 +152,4 @@ const LeadFinder1 = () => {
     );
   };
 
-export default LeadFinder1;
+export default LeadFinder;
