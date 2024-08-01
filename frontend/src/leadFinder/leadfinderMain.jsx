@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client'
 import '../index.css'
 
 import SearchByLocation from './leadFinderLocation';
-
+import SearchByZipcodes from './leadFinderZipcodes';
 // Header component for the Application 
 const Header = () => {
   return (
@@ -58,7 +58,7 @@ const LeadFinder = () => {
                 <SearchByLocation backendUrl={backendUrl}/>
               </Tab>
               <Tab label="Zip Code Search">
-                {/* Add your SearchByZipCode component here */}
+                <SearchByZipcodes backendUrl={backendUrl}/>
               </Tab>
               <Tab label="Usage Guide & Documentation">
                 {/* Add your UsageGuide component here */}
