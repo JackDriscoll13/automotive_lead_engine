@@ -6,7 +6,7 @@ import './index.css'
 
 
 import HomePage from './home';
-import LeadFinder from './leadfinderMain';
+import LeadFinder from './leadFinder/leadfinderMain';
 
 
 function AppContent() {

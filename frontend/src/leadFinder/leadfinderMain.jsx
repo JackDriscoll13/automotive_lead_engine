@@ -1,6 +1,6 @@
 import React, {useState, useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
-import './index.css'
+import '../index.css'
 
 // The first leadfinder application
 const LeadFinder = () => {
@@ -105,7 +105,7 @@ const LeadFinder = () => {
       <div className="min-h-screen bg-gray-100">
         <header className="bg-charcoal text-white p-4 shadow-md">
           <div className="container mx-auto">
-            <h1 className="text-2xl font-semibold">Chris's Car Wash Finder</h1>
+            <h1 className="text-2xl font-semibold">Car Wash Lead Generator</h1>
           </div>
         </header>
   
