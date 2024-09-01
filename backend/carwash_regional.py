@@ -24,6 +24,7 @@ def get_all_car_washes(api_key, region):
 
     base_url = "https://places.googleapis.com/v1/places:searchText"
     
+    # These headers: we pass the api key, we pass the field mask
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": api_key,
