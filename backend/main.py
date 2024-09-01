@@ -52,3 +52,5 @@ def search_carwashes(request: SearchCarwashesRequest):
         total_time = round((time.time() - start_time), 2)
 
         return {'results': car_washes_result, 'num_results': num_results, 'exc_time': total_time}
+    
+

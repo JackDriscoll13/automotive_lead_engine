@@ -3,7 +3,24 @@ import time
 from utils import check_api_call_limit
 
 def get_all_car_washes(api_key, region):
-    """ Primary function to ping the google places API and get all car washes in a region """
+    """
+    Fetch car washes in a region using Google Places API.
+    Makes multiple API calls to get car wash and detailing businesses,
+    handling pagination and API usage limits.
+
+    Args:
+        api_key (str): Google Maps API key.
+        region (str): Search region.
+
+    Returns:
+        list: Car wash info (name, address, rating, etc.) if successful.
+        dict: Error details if API limit exceeded.
+
+    Notes:
+        - Uses check_api_call_limit to stay within API limits.
+        - Maximum 3 API calls per invocation.
+        - Searches for "car wash and car detailing" businesses.
+    """
 
     base_url = "https://places.googleapis.com/v1/places:searchText"
     
