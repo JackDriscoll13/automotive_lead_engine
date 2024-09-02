@@ -22,10 +22,33 @@ In both of my text and nearby sea
   - This API can be called 1-3 times when a user hits "search"
 
 - Geocoding Api 
-  - Price: 5$ per 1000 Api cals 
+  - Price: 5$ per 1000 Api calls 
   - We use the geocoding to convert zip codes to coordinates in the "Zip Code Search Feature" 
 
 - Nearby Search Api (Advanced)
+  - Price 35$ per 1000 Api calls
+  - In the zip code feauture, after converting zip codes to coordinates, we retrieve car washes "nearby" those coordinates with this api.
+
+API Call Imposed Limitiations: 
+
+- The current goal is to not exceed the google api free tier, which is 200$ per month. 
+
+- Text Search API - Monthly Limit: 1600 calls  Daily limit: 400 calls 
+- Nearby Search API: Monthly Limit: 3800 calls  Daily limit: 800 calls
+- Geocoding API: Monthly Limit: None 
+
+The thinking here is:
+1. The Nearby Search will be used more
+2. The Nearby Search is less "call efficient", it uses up more requests per seach. 
+3. The geocoding api is inherently related to the nearby search (everytime the application cals the geocoding api it also calls the nearby search api), so there is no need to limit the geocoding api. 
+
+If we max out our limits in a given month we: 
+1600 Text Searches = 56$
+3800 Nearby Searches = 133$
+3800 Geocodings = 19$
+Total = 208$ per month which brings our cost to 8$ because of the free tier. 
+  
+
 
 
 
