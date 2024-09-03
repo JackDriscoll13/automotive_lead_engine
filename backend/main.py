@@ -1,12 +1,14 @@
 # Fast API main file
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import StreamingResponse
 from dotenv import load_dotenv
 import os
 import time
 # Local Imports 
 from carwash_regional import get_all_car_washes
 from carwash_zipcode import get_car_washes_by_zip
+from carwash_zipcode2 import generate_carwashes_by_zipcode2
 # 
 from pydantic import BaseModel
 
@@ -60,6 +62,8 @@ def search_carwashes(request: SearchCarwashesRequest):
 
 @app.post("/search_zip_codes")
 async def search_carwashes(request: SearchZipCodesRequest):
-    return await get_car_washes_by_zip(GOOGLE_API_KEY, request.zip_codes, request.radius)
+    print("Zip Code Search Request: ", request.zip_codes)
+    print("Radius Specified:", request.radius)
+    return StreamingResponse(generate_carwashes_by_zipcode2(GOOGLE_API_KEY, request.zip_codes, request.radius), media_type="text/event-stream")
     
 
