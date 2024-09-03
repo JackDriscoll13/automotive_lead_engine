@@ -88,11 +88,11 @@ async def get_car_washes_by_zip(api_key: str, zip_codes: str | list[str], zipcod
                             "lat": place["geometry"]["location"]["lat"],
                             "lng": place["geometry"]["location"]["lng"],
                             "goog_places_id": place_id,
-                            "zip_code": zip_code
+                            "zip_codes_nearby": [zip_code]
                         }
                     else:
-                        if zip_code not in all_car_washes[place_id]["zip_codes"]:
-                            all_car_washes[place_id]["zip_codes"].append(zip_code)
+                        if zip_code not in all_car_washes[place_id]["zip_codes_nearby"]:
+                            all_car_washes[place_id]["zip_codes_nearby"].append(zip_code)
                 
                 next_page_token = results.get("next_page_token")
                 callcount += 1
