@@ -6,12 +6,16 @@ import os
 import time
 # Local Imports 
 from carwash_regional import get_all_car_washes
-from utils import check_api_call_limit
+from carwash_zipcode import get_car_washes_by_zip
 # 
 from pydantic import BaseModel
 
 class SearchCarwashesRequest(BaseModel):
     region: str
+
+class SearchZipCodesRequest(BaseModel):
+    zip_codes: str | list[str]
+    radius: int = 5000
 
 
 app = FastAPI()
@@ -52,5 +56,10 @@ def search_carwashes(request: SearchCarwashesRequest):
         total_time = round((time.time() - start_time), 2)
 
         return {'results': car_washes_result, 'num_results': num_results, 'exc_time': total_time}
+    
+
+@app.post("/search_zip_codes")
+async def search_carwashes(request: SearchZipCodesRequest):
+    return await get_car_washes_by_zip(GOOGLE_API_KEY, request.zip_codes, request.radius)
     
 
