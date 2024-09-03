@@ -21,7 +21,7 @@ allowed_origins = [
     "https://qfresheners.com",
     "https://www.qfresheners.com",
     # Include your local development URL if needed, e.g.:
-    # "http://localhost:3000",
+    "http://localhost:5173",
 ]
 
 app.add_middleware(
