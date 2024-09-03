@@ -4,6 +4,7 @@ import googlemaps
 import json
 import requests
 from utils import check_api_call_limit
+
 # Lets try to use a generator so we can stream some progress statements to the frontend
 async def get_car_washes_by_zip(api_key: str, zip_codes: str | list[str], zipcode_radius: int = 5000):
     """
@@ -24,7 +25,9 @@ async def get_car_washes_by_zip(api_key: str, zip_codes: str | list[str], zipcod
         else:
             zip_codes_list = zip_codes
 
-        yield json.dumps({"message": f"Starting search for {len(zip_codes_list)} zip codes..."}) + "\n"
+        yield json.dumps({
+            "type": "progress",
+            "message": f"Starting search for {len(zip_codes_list)} zip codes..."}) + "\n"
 
         gmaps = googlemaps.Client(key=api_key)
         places_url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
@@ -32,19 +35,19 @@ async def get_car_washes_by_zip(api_key: str, zip_codes: str | list[str], zipcod
         all_car_washes = {}  # Use a dictionary to store unique car washes (for deduplication)
 
         for zip_code in zip_codes_list:
-            yield json.dumps({"message": f"Getting coordinates for car washes in {zip_code}"}) + "\n"
+            yield json.dumps({"type": "progress", "message": f"Getting coordinates for car washes in {zip_code}"}) + "\n"
             try:
                 geocode_result = gmaps.geocode(f"{zip_code}, USA")
                 if not geocode_result:
-                    yield json.dumps({"message": f"Could not find coordinates for zip code {zip_code}"}) + "\n"
+                    yield json.dumps({"type": "progress", "message": f"Could not find coordinates for zip code {zip_code}"}) + "\n"
                     continue
                 
                 location = geocode_result[0]['geometry']['location']
             except Exception as e:
-                yield json.dumps({"message": f"Error geocoding zip code {zip_code}: {str(e)}"}) + "\n"
+                yield json.dumps({"type": "progress", "message": f"Error geocoding zip code {zip_code}: {str(e)}"}) + "\n"
                 continue
 
-            yield json.dumps({"message": f"Searching for car washes within {zipcode_radius}m radius of {zip_code}"}) + "\n"
+            yield json.dumps({"type": "progress", "message": f"Searching for car washes within {zipcode_radius}m radius of {zip_code}"}) + "\n"
 
             params = {
                 "key": api_key,
@@ -70,7 +73,7 @@ async def get_car_washes_by_zip(api_key: str, zip_codes: str | list[str], zipcod
                 results = response.json()
                 
                 if results.get("status") != "OK":
-                    yield json.dumps({"message": f"Error for zip code {zip_code}: {results.get('status')}"}) + "\n"
+                    yield json.dumps({"type": "progress", "message": f"Error for zip code {zip_code}: {results.get('status')}"}) + "\n"
                     break
                 
                 for place in results.get("results", []):
@@ -78,12 +81,14 @@ async def get_car_washes_by_zip(api_key: str, zip_codes: str | list[str], zipcod
                     if place_id not in all_car_washes:
                         all_car_washes[place_id] = {
                             "name": place["name"],
-                            "address": place.get("vicinity"),
+                            "address": place.get("formattedAddress"),
                             "goog_rating": place.get("rating"),
+                            "phone": place.get("nationalPhoneNumber"),
+                            "website": place.get("websiteUri"),
                             "lat": place["geometry"]["location"]["lat"],
                             "lng": place["geometry"]["location"]["lng"],
                             "goog_places_id": place_id,
-                            "zip_codes": [zip_code]
+                            "zip_code": zip_code
                         }
                     else:
                         if zip_code not in all_car_washes[place_id]["zip_codes"]:
@@ -96,10 +101,11 @@ async def get_car_washes_by_zip(api_key: str, zip_codes: str | list[str], zipcod
                 
                 await asyncio.sleep(2)
 
-            yield json.dumps({"message": f"Completed search for {zip_code}"}) + "\n"
+            yield json.dumps({"type": "progress", "message": f"Completed search for {zip_code}"}) + "\n"
 
         final_results = list(all_car_washes.values())
         yield json.dumps({
+            "type": "result",
             "message": "Search complete",
             "results": final_results,
             "num_results": len(final_results),
