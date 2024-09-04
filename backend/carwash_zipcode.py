@@ -19,7 +19,9 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
     Returns:
         StreamingResponse: Streams updates and final results.
     """
-     
+    # Initialize the start time so we can calculate how long the function takes to run
+    start_time = time.time()
+
     # If the zip code is a string convert it to a list
     if isinstance(zip_codes, str):
         zip_codes_list = [zip_codes]
@@ -127,5 +129,6 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
         "message": "Search complete",
         "results": final_results,
         "num_results": len(final_results),
-        "num_zip_codes": len(zip_codes_list)
+        "num_zip_codes": len(zip_codes_list),
+        "exc_time": round((time.time() - start_time), 2)
     }) + "\n"

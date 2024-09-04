@@ -69,8 +69,7 @@ def search_carwashes(request: SearchCarwashesRequest):
 
 @app.post("/search_carwashes_zipcodes")
 async def search_carwashes(request: SearchZipCodesRequest):
-    print("Zip Code Search Request: ", request.zip_codes)
-    print("Radius Specified:", request.radius)
+    # This endpoint is basically a generator that returns a yield of data to the frontend through a streaming response
     return StreamingResponse(generate_carwashes_by_zipcode2(GOOGLE_API_KEY, request.zip_codes, request.radius), media_type="text/event-stream")
     
 
