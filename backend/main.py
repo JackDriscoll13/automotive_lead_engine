@@ -2,14 +2,20 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-from dotenv import load_dotenv
+
 import os
 import time
+
+# Env 
+from dotenv import load_dotenv
+
 # Local Imports 
 from carwash_regional import get_all_car_washes
-from carwash_zipcode import get_car_washes_by_zip
-from carwash_zipcode2 import generate_carwashes_by_zipcode2
-# 
+from carwash_zipcode import generate_carwashes_by_zipcode2
+
+
+
+#  Just defining my models here for simplicity
 from pydantic import BaseModel
 
 class SearchCarwashesRequest(BaseModel):
@@ -26,7 +32,7 @@ app = FastAPI()
 allowed_origins = [
     "https://qfresheners.com",
     "https://www.qfresheners.com",
-    # Include your local development URL if needed, e.g.:
+    # If developing locally, e.g.:
     "http://localhost:5173",
 ]
 
@@ -34,17 +40,18 @@ app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["GET", "POST", "PUT", "DELETE"],  # Specify the HTTP methods you want to allow
-    allow_headers=["*"],  # You might want to restrict this to specific headers
+    allow_methods=["GET", "POST", "PUT", "DELETE"],  
+    allow_headers=["*"],  
 )
-load_dotenv()
 
 # Load the api key from dotenv:
+load_dotenv()
 GOOGLE_API_KEY = os.getenv('GOOGLE_MAPS_API_KEY')
 if not GOOGLE_API_KEY:
     raise ValueError("No API key found. Please set the GOOGLE_MAPS_API_KEY environment variable in the .env file.")
 
-@app.post("/search_carwashes")
+
+@app.post("/search_carwashes_regions")
 def search_carwashes(request: SearchCarwashesRequest):
     """Get a list of car washes in a region"""
     # print(f"api key: {GOOGLE_API_KEY}")
@@ -60,7 +67,7 @@ def search_carwashes(request: SearchCarwashesRequest):
         return {'results': car_washes_result, 'num_results': num_results, 'exc_time': total_time}
     
 
-@app.post("/search_zip_codes")
+@app.post("/search_carwashes_zipcodes")
 async def search_carwashes(request: SearchZipCodesRequest):
     print("Zip Code Search Request: ", request.zip_codes)
     print("Radius Specified:", request.radius)
