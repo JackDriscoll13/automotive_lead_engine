@@ -118,7 +118,7 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
             if not next_page_token or callcount >= 3:
                 break
             # If there is a next page token, we wait 2 seconds before making the next request (to comply with API usage limits)
-            time.sleep(1)
+            time.sleep(2)
             
         
         yield json.dumps({"type": "progress", "message": f"Completed search for {zip_code}"}) + "\n"

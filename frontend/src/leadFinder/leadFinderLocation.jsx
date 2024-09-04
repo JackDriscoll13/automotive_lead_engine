@@ -18,7 +18,7 @@ const SearchByLocation = ({backendUrl} ) => {
   
   
       try {
-        const response = await fetch(`${backendUrl}/search_carwashes`, {
+        const response = await fetch(`${backendUrl}/search_carwashes_regions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',

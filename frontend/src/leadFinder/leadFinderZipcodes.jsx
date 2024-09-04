@@ -1,4 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
+
+// FontAwesome for tooltip/info icon
+import { FaInfoCircle } from 'react-icons/fa';
 
 
 // Logging functions (with timestamp)
@@ -12,11 +15,27 @@ const SearchByZipcodes = ({ backendUrl }) => {
     const [zipCodes, setZipCodes] = useState('');
     const [radius, setRadius] = useState(5000);
 
+    // State to track input text area 
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+        adjustTextareaHeight();
+    }, [zipCodes]);
+
+    const adjustTextareaHeight = () => {
+        const textarea = textareaRef.current;
+        if (textarea) {
+            textarea.style.height = 'auto';
+            const newHeight = Math.min(textarea.scrollHeight, 4 * 24); // 4 lines * 24px line height
+            textarea.style.height = `${newHeight}px`;
+        }
+    };
+
     const handleSearch = async () => {
       setMessages([]);
       setResults(null);
   
-      const response = await fetch(`${backendUrl}/search_zip_codes`, {
+      const response = await fetch(`${backendUrl}/search_carwashes_zipcodes`, {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json',
@@ -67,30 +86,56 @@ const SearchByZipcodes = ({ backendUrl }) => {
   };
 
     return (
-        <div className="p-4">
-            <input
-                type="text"
-                value={zipCodes}
-                onChange={(e) => setZipCodes(e.target.value)}
-                placeholder="Enter zip codes (comma-separated)"
-                className="border p-2 mr-2"
-            />
-            <input
-                type="number"
-                value={radius}
-                onChange={(e) => setRadius(parseInt(e.target.value))}
-                placeholder="Radius (meters)"
-                className="border p-2 mr-2"
-            />
-            <button onClick={handleSearch} className="bg-blue-500 text-white p-2 rounded">
-                Search
-            </button>
-
-            <div className="mt-4">
-                {messages.map((msg, index) => (
-                    <p key={index}>{msg}</p>
-                ))}
-            </div>
+        <div className="container mx-auto mt-6 p-4">
+            <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="max-w-md mx-auto mb-12">
+                <div className="flex flex-col items-center border-b-2 border-charcoal py-4 shadow-md">
+                    <div className="w-full mb-4 flex flex-col items-center">
+                    <div className="flex">
+                        <label htmlFor="zipCodes" className="block text-lg font-medium text-gray-700 mb-2 text-center">
+                            Enter zip codes:
+                        </label>
+                        <div className="relative group ml-1">
+                                <FaInfoCircle className="text-gray-500 hover:text-gray-700 cursor-help"/>
+                                <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-0 bottom-full mb-2 w-48">
+                                    Enter up to 50 zip codes, separated by commas.
+                                </div>
+                        </div>
+                        </div>
+                        <textarea
+                            ref={textareaRef}
+                            id="zipCodes"
+                            value={zipCodes}
+                            onChange={(e) => setZipCodes(e.target.value)}
+                            placeholder="e.g. 90210, 10001, 60601"
+                            className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-3/4 max-w-md text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal resize-none overflow-y-auto"
+                            style={{ minHeight: '24px', maxHeight: '96px' }} // 1 line min, 4 lines max
+                        />
+                    </div>
+                    <div className="w-full mr-2 flex items-center mb-2">
+                        <input
+                            type="range"
+                            min="2000"
+                            max="20000"
+                            step="100"
+                            value={radius}
+                            onChange={(e) => setRadius(parseInt(e.target.value))}
+                            className="w-3/4 mr-2"
+                        />
+                        <span className="w-1/4 text-sm">{radius} m</span>
+                    </div>
+                    {radius > 8000 && (
+                        <p className="text-yellow-600 text-xs mb-2">
+                            Warning: It's rare for zip codes to be this large. Please ensure you know what you're doing.
+                        </p>
+                    )}
+                    <button
+                        type="submit"
+                        className="flex-shrink-0 bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700 text-sm border-4 text-white py-1 px-2 rounded"
+                    >
+                        Search
+                    </button>
+                </div>
+                </form>
 
             {results && (
                 <div className="mt-4">
