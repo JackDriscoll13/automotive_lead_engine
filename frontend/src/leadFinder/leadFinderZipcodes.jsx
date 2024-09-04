@@ -12,9 +12,12 @@ const log = (message, data = null) => console.log(`[${getTimestamp()}] ${message
 const SearchByZipcodes = ({ backendUrl }) => {
     const [messages, setMessages] = useState([]);
     const [results, setResults] = useState(null);
+    // State to track the zip codes and radius input by the user
     const [zipCodes, setZipCodes] = useState('');
     const [radius, setRadius] = useState(5000);
-
+    // State to track input validity and error message
+    const [isValidInput, setIsValidInput] = useState(true);
+    const [inputError, setInputError] = useState('');
     // State to track input text area 
     const textareaRef = useRef(null);
 
@@ -31,7 +34,39 @@ const SearchByZipcodes = ({ backendUrl }) => {
         }
     };
 
+
+    // Function to validate zip codes
+
+    const validateZipCodes = (input) => {
+        const trimmedInput = input.replace(/\s/g, '').replace(/,$/, '');
+        const zipCodePattern = /^(\d{5},)*\d{5}(,)?$/;
+        const isValid = zipCodePattern.test(trimmedInput);
+        const zipCodeCount = trimmedInput.split(',').length;
+
+        if (!isValid) {
+            setInputError('Please enter valid zip codes (5 digits each, separated by commas).');
+            return false;
+        } else if (zipCodeCount > 50) {
+            setInputError('Please enter no more than 50 zip codes.');
+            return false;
+        } else {
+            setInputError('');
+            return true;
+        }
+    };
+
+    const handleZipCodeChange = (e) => {
+        const newValue = e.target.value;
+        setZipCodes(newValue);
+        setIsValidInput(validateZipCodes(newValue));
+    };
+
     const handleSearch = async () => {
+        // Check if the input is valid
+         if (!isValidInput) {
+            alert(inputError);
+            return;
+        }
       setMessages([]);
       setResults(null);
   
@@ -87,7 +122,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
 
     return (
         <div className="container mx-auto mt-6 p-4">
-            <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="max-w-md mx-auto mb-12">
+           <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="max-w-md mx-auto mb-12">
                 <div className="flex flex-col items-center border-b-2 border-charcoal py-4 shadow-md">
                     <div className="w-full mb-4 flex flex-col items-center">
                     <div className="flex">
@@ -102,14 +137,19 @@ const SearchByZipcodes = ({ backendUrl }) => {
                         </div>
                         </div>
                         <textarea
-                            ref={textareaRef}
-                            id="zipCodes"
-                            value={zipCodes}
-                            onChange={(e) => setZipCodes(e.target.value)}
-                            placeholder="e.g. 90210, 10001, 60601"
-                            className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-3/4 max-w-md text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal resize-none overflow-y-auto"
-                            style={{ minHeight: '24px', maxHeight: '96px' }} // 1 line min, 4 lines max
-                        />
+                    ref={textareaRef}
+                    id="zipCodes"
+                    value={zipCodes}
+                    onChange={handleZipCodeChange}
+                    placeholder="e.g. 90210, 10001, 60601"
+                    className={`appearance-none bg-white border ${isValidInput ? 'border-gray-300' : 'border-red-500'} rounded-md shadow-sm w-3/4 max-w-md text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal resize-none overflow-y-auto`}
+                    style={{ minHeight: '24px', maxHeight: '96px' }}
+                />
+                {!isValidInput && inputError && (
+                    <p className="text-red-500 text-xs mt-1">
+                        {inputError}
+                    </p>
+                )}
                     </div>
                     <div className="w-full mr-2 flex items-center mb-2">
                         <input
