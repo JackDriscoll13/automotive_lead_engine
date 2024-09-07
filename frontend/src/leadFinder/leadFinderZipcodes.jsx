@@ -151,7 +151,21 @@ const SearchByZipcodes = ({ backendUrl }) => {
                     </p>
                 )}
                     </div>
-                    <div className="w-full mr-2 flex items-center mb-2">
+                    <div className="w-full mr-2 flex-col items-center mb-2 justify-center">
+                        <div className="flex justify-center">
+                        <label htmlFor="radius" className="block text-lg font-medium text-gray-700 mb-2 text-center">
+                            Adjust search radius:
+                        </label>
+                        <div className="relative group ml-1">
+                                <FaInfoCircle className="text-gray-500 hover:text-gray-700 cursor-help"/>
+                                <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-0 bottom-full mb-2 w-48">
+                                    You want to adjust the search radius depending on the population density of the zip codes you're interested in. 
+                                    Urban zip codes will require a smaller radius, while rural zip codes will require a larger radius. An average radius is 5000 meters.
+                                </div>
+                        </div>
+                    </div>
+                        <div className="text-sm text-center">{radius} m</div>
+                    <div className="flex justify-center">
                         <input
                             type="range"
                             min="2000"
@@ -159,15 +173,17 @@ const SearchByZipcodes = ({ backendUrl }) => {
                             step="100"
                             value={radius}
                             onChange={(e) => setRadius(parseInt(e.target.value))}
-                            className="w-3/4 mr-2"
+                            className="w-1/2 mr-2 text-center"
                         />
-                        <span className="w-1/4 text-sm">{radius} m</span>
                     </div>
+                    <div className="flex justify-center">
                     {radius > 8000 && (
-                        <p className="text-yellow-600 text-xs mb-2">
+                        <p className="text-yellow-600 text-xs mb-2 w-1/2 text-center">
                             Warning: It's rare for zip codes to be this large. Please ensure you know what you're doing.
                         </p>
                     )}
+                    </div>
+                    </div>
                     <button
                         type="submit"
                         className="flex-shrink-0 bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700 text-sm border-4 text-white py-1 px-2 rounded"
