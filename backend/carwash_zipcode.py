@@ -35,7 +35,7 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
 
     # Initialize the Google Maps client
     gmaps = googlemaps.Client(key=api_key)
-    places_url = "https://maps.googleapis.com/maps/api/place/nearbysearch/json"
+    places_url = "https://places.googleapis.com/v1/places:searchNearby"
     
     all_car_washes = {}  # Use a dictionary to store unique car washes (for deduplication)
 
@@ -54,20 +54,40 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
             continue
 
         # Once we have the coordinates, search for car washes in area (within the specified radius) of that zip code
+        yield json.dumps({"type": "progress", "message": f"Coordinates for {zip_code} are: {location}"}) + "\n"
         yield json.dumps({"type": "progress", "message": f"Searching for car washes within {zipcode_radius}m radius of {zip_code}"}) + "\n"
 
+        # We set up the params for the Google Places API Nearby Search
+        headers = {
+            "Content-Type": "application/json",
+            "X-Goog-Api-Key": api_key,
+            "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.rating,places.location,places.id,places.nationalPhoneNumber,places.websiteUri"
+        }
+
         params = {
-            "key": api_key,
-            "location": f"{location['lat']},{location['lng']}",
-            "radius": zipcode_radius,
-            "type": "car_wash",
-            "keyword": "car wash"
+        "includedTypes": [
+            "car_wash",
+            "car_repair",
+            "gas_station",
+            "rest_stop"
+        ],
+        "maxResultCount": 20,
+        "locationRestriction": {
+            "circle": {
+            "center": {
+                "latitude": location["lat"],
+                "longitude": location["lng"]
+            },
+            "radius": zipcode_radius
+            }
+            
+        }
         }
         
         # We have to handle pagination because we can only get 20 results at a time (On the rare chance that there are more than 20 car washes in a given area/radius)
         next_page_token = None
         callcount = 0
-
+        num_car_washes_found = 0
         while True:
             # We check if we've exceeded our api call limit, if so we stream an error message and break out of the loop 
             success, message, counts = check_api_call_limit("nearby_search", daily_limit=800, monthly_limit=3800)
@@ -80,16 +100,21 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
                 params["pagetoken"] = next_page_token
             
             # Finally, we make the request to the Google Places API with the params we've set up
-            response = requests.get(places_url, params=params)
+            print("headers: ", headers)
+            response = requests.post(places_url, json=params, headers=headers)
             results = response.json()
-            
+            print(json.dumps(results, indent=4))
+            print('Total results: ', len(results['places']))
             # If the status is not OK, we stream an error message and break out of the loop
             if results.get("status") != "OK":
+                print('OKAY!')
                 yield json.dumps({"type": "progress", "message": f"Error for zip code {zip_code}: {results.get('status')}"}) + "\n"
                 break
             
             # Iterate over the results and add them to the all_car_washes dictionary
             for place in results.get("results", []):
+                print(place)
+                num_car_washes_found += 1
                 place_id = place['place_id']
 
                 # If the place_id is not in the all_car_washes dictionary, we add it
@@ -120,8 +145,8 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
             # If there is a next page token, we wait 2 seconds before making the next request (to comply with API usage limits)
             time.sleep(2)
             
-        
-        yield json.dumps({"type": "progress", "message": f"Completed search for {zip_code}"}) + "\n"
+        # Want to keep track of how many car washes we've found for the given zip code
+        yield json.dumps({"type": "progress", "message": f"Completed search for {zip_code}; {num_car_washes_found} car washes found"}) + "\n"
 
     final_results = list(all_car_washes.values())
     yield json.dumps({

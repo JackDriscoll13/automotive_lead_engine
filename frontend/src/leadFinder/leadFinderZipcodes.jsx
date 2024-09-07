@@ -12,13 +12,13 @@ const log = (message, data = null) => console.log(`[${getTimestamp()}] ${message
 const SearchByZipcodes = ({ backendUrl }) => {
     const [messages, setMessages] = useState([]);
     const [results, setResults] = useState(null);
+
     // State to track the zip codes and radius input by the user
     const [zipCodes, setZipCodes] = useState('');
     const [radius, setRadius] = useState(5000);
     // State to track input validity and error message
     const [isValidInput, setIsValidInput] = useState(true);
     const [inputError, setInputError] = useState('');
-    // State to track input text area 
     const textareaRef = useRef(null);
 
     useEffect(() => {
@@ -153,7 +153,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
                     </div>
                     <div className="w-full mr-2 flex-col items-center mb-2 justify-center">
                         <div className="flex justify-center">
-                        <label htmlFor="radius" className="block text-lg font-medium text-gray-700 mb-2 text-center">
+                        <label htmlFor="radius" className="block text-md font-medium text-gray-700 mb-2 text-center">
                             Adjust search radius:
                         </label>
                         <div className="relative group ml-1">
@@ -191,22 +191,34 @@ const SearchByZipcodes = ({ backendUrl }) => {
                         Search
                     </button>
                 </div>
-                </form>
+            </form>
 
-            {results && (
-                <div className="mt-4">
-                    <h2>Results:</h2>
-                    <p>Number of car washes found: {results.num_results}</p>
-                    <p>Number of zip codes searched: {results.num_zip_codes}</p>
-                    <ul>
-                        {results.results.map((carWash, index) => (
-                            <li key={index}>
-                                {carWash.name} - Rating: {carWash.goog_rating}, 
-                            </li>
-                        ))}
-                    </ul>
+            <div className="mt-4 justify-center text-center flex col gap-x-12">
+                <div className="bg-gray-100 p-4 h-[50vh] w-[25vw] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto shadow-md border-2 border-gray-300">
+                    {messages.length > 0 && (
+                        <div className="mt-4">
+                            <h2 className="text-xl font-semibold mb-2">Search Logs:</h2>
+                            <ul className="list-none pl-10 text-left">
+                                {messages.map((message, index) => (
+                                    <li key={index} className="flex items-start">
+                                        <span className="mr-2">&mdash;</span>
+                                        <span>{message}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </div>
-            )}
+                {results && (
+                    <div className="bg-gray-100 p-4 h-[50vh] w-[40vw] rounded text-sm text-gray-700 overflow-x-aut shadow-md border-2 border-gray-300">
+                        <h2 className="text-xl font-semibold mb-2">Results:</h2>
+                        <p className="text-md font-semibold italic mb-2">Searched {results.num_zip_codes} zip codes, found {results.num_results} car washes in {results.exc_time} seconds.</p>
+                        <pre className="bg-gray-200 p-4 h-[35vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto text-left">
+                            {JSON.stringify(results, null, 2)}
+                        </pre>
+                    </div>
+                )}
+            </div>
         </div>
     );
 };

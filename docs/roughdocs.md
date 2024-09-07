@@ -71,3 +71,24 @@ Reasoning / Justification of Services:
   - Ultimatley, I chose to use the google geocoding API because I was already using a google api as the cornerstone 
   - of this project. Plus its reliable and should be free/extremely low cost. 
 
+
+Request Details and Field Mask: 
+
+Location Restriction: 
+
+
+Included Types:
+    Included types lets you specify a list of types from [here](https://developers.google.com/maps/documentation/places/web-service/place-types#table-a) to filter the search results.
+
+    Automotive Types to include?:
+        car_dealer
+        car_rental
+        car_repair
+        car_wash
+        electric_vehicle_charging_station
+        gas_station
+        parking
+        rest_stop
+
+
+
