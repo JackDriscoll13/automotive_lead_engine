@@ -103,7 +103,7 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
                                   "message": f"Found {len(results['places'])} car washes in {zip_code}. This likely means the radius is too large and you did not capture all car washes within this zip code. Try a smaller radius."}) + "\n"
             if len(results['places']) == 0:
                 yield json.dumps({"type": "warning", 
-                                  "message": f"Found 0 car washes in {zip_code}. This means there was no car washes found within {zipcode_radius}m of {zip_code}. Try a smaller radius."}) + "\n"
+                                  "message": f"Found 0 car washes in {zip_code}. This is not bad, it just means there are no car washes within the radius of {zipcode_radius}m."}) + "\n"
             print('Total results: ', len(results['places']))
 
             # If the status is not OK, we stream an error message and break out of the loop

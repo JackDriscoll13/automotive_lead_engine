@@ -104,17 +104,19 @@ const SearchByZipcodes = ({ backendUrl }) => {
               if (line.trim() !== '') {
                   log('Processing line:', line);
                   try {
-                      const data = JSON.parse(line);
-                      if (data.type === 'progress') {
-                          log('Progress update:', data.message);
-                          setMessages(prev => [...prev, data.message]);
-                      } else if (data.type === 'result') {
-                          log('Received final result:', data);
-                          setResults(data);
-                      }
-                  } catch (error) {
-                      console.error('Error parsing JSON:', error);
-                  }
+                    const data = JSON.parse(line);
+                    if (data.type === 'progress') {
+                        log('Progress update:', data.message);
+                        setMessages(prev => [...prev, { type: 'progress', message: data.message }]);
+                    } else if (data.type === 'warning') {
+                        setMessages(prev => [...prev, { type: 'warning', message: data.message }]);
+                    } else if (data.type === 'result') {
+                        log('Received final result:', data);
+                        setResults(data);
+                    }
+                } catch (error) {
+                    console.error('Error parsing JSON:', error);
+                }
               }
           }
       }
@@ -196,18 +198,20 @@ const SearchByZipcodes = ({ backendUrl }) => {
             <div className="mt-4 justify-center text-center flex col gap-x-12">
                 <div className="bg-gray-100 p-4 h-[50vh] w-[25vw] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto shadow-md border-2 border-gray-300">
                     {messages.length > 0 && (
-                        <div className="mt-4">
-                            <h2 className="text-xl font-semibold mb-2">Search Logs:</h2>
-                            <ul className="list-none pl-10 text-left">
-                                {messages.map((message, index) => (
-                                    <li key={index} className="flex items-start">
-                                        <span className="mr-2">&mdash;</span>
-                                        <span>{message}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        </div>
-                    )}
+                            <div className="mt-4">
+                                <h2 className="text-xl font-semibold mb-2">Search Logs:</h2>
+                                <ul className="list-none pl-10 text-left">
+                                    {messages.map((message, index) => (
+                                        <li key={index} className="flex items-start">
+                                            <span className="mr-2">&mdash;</span>
+                                            <span className={message.type === 'warning' ? 'text-red-600 font-semibold' : ''}>
+                                                {message.message}
+                                            </span>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
                 </div>
                 {results && (
                     <div className="bg-gray-100 p-4 h-[50vh] w-[40vw] rounded text-sm text-gray-700 overflow-x-aut shadow-md border-2 border-gray-300">
