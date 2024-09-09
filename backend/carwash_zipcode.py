@@ -84,9 +84,8 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
         }
         }
         
-        # We have to handle pagination because we can only get 20 results at a time (On the rare chance that there are more than 20 car washes in a given area/radius)
-        next_page_token = None
-        callcount = 0
+        # As of now, there is no next page token with this endpoint, no need to set it
+
         num_car_washes_found = 0
         while True:
             # We check if we've exceeded our api call limit, if so we stream an error message and break out of the loop 
@@ -95,38 +94,40 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
                 yield json.dumps({"error": f"Limit exceeded: {message}. Total calls: {counts['total_calls']}, Monthly calls: {counts['monthly_calls']}, Daily calls: {counts['daily_calls']}."}) + "\n"
                 return
 
-            # If there is a next page token, we add it to the params
-            if next_page_token:
-                params["pagetoken"] = next_page_token
             
             # Finally, we make the request to the Google Places API with the params we've set up
-            print("headers: ", headers)
             response = requests.post(places_url, json=params, headers=headers)
             results = response.json()
-            print(json.dumps(results, indent=4))
+            if len(results['places']) > 19:
+                yield json.dumps({"type": "warning", 
+                                  "message": f"Found {len(results['places'])} car washes in {zip_code}. This likely means the radius is too large and you did not capture all car washes within this zip code. Try a smaller radius."}) + "\n"
+            if len(results['places']) == 0:
+                yield json.dumps({"type": "warning", 
+                                  "message": f"Found 0 car washes in {zip_code}. This means there was no car washes found within {zipcode_radius}m of {zip_code}. Try a smaller radius."}) + "\n"
             print('Total results: ', len(results['places']))
+
             # If the status is not OK, we stream an error message and break out of the loop
-            if results.get("status") != "OK":
-                print('OKAY!')
-                yield json.dumps({"type": "progress", "message": f"Error for zip code {zip_code}: {results.get('status')}"}) + "\n"
+            if response.status_code != 200:
+                print(response.text)
+                yield json.dumps({"error": f"Error: {response.status_code} - {response.text}"}) + "\n"
                 break
             
             # Iterate over the results and add them to the all_car_washes dictionary
-            for place in results.get("results", []):
-                print(place)
+            for place in results["places"]:
                 num_car_washes_found += 1
-                place_id = place['place_id']
+                place_id = place['id']
+        
 
                 # If the place_id is not in the all_car_washes dictionary, we add it
                 if place_id not in all_car_washes:
                     all_car_washes[place_id] = {
-                        "name": place["name"],
+                        "name": place["displayName"]["text"],
                         "address": place.get("formattedAddress"),
                         "goog_rating": place.get("rating"),
                         "phone": place.get("nationalPhoneNumber"),
                         "website": place.get("websiteUri"),
-                        "lat": place["geometry"]["location"]["lat"],
-                        "lng": place["geometry"]["location"]["lng"],
+                        "lat": place["location"]["latitude"],
+                        "lng": place["location"]["longitude"],
                         "goog_places_id": place_id,
                         "zip_codes_nearby": [zip_code]
                     }
@@ -135,15 +136,10 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
                     if zip_code not in all_car_washes[place_id]["zip_codes_nearby"]:
                         all_car_washes[place_id]["zip_codes_nearby"].append(zip_code)
             
-            # We set the next page token to the next page token in the results
-            next_page_token = results.get("next_page_token")
-            callcount += 1
+    
 
-            # If there is no next page token or we've made 3 calls, we break out of the loop
-            if not next_page_token or callcount >= 3:
-                break
-            # If there is a next page token, we wait 2 seconds before making the next request (to comply with API usage limits)
-            time.sleep(2)
+        
+            break
             
         # Want to keep track of how many car washes we've found for the given zip code
         yield json.dumps({"type": "progress", "message": f"Completed search for {zip_code}; {num_car_washes_found} car washes found"}) + "\n"
