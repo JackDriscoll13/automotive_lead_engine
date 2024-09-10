@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-
+import { downloadCSV } from './leadFinderUtils';
 // FontAwesome for tooltip/info icon
 import { FaInfoCircle } from 'react-icons/fa';
 
@@ -12,6 +12,7 @@ const log = (message, data = null) => console.log(`[${getTimestamp()}] ${message
 const SearchByZipcodes = ({ backendUrl }) => {
     const [messages, setMessages] = useState([]);
     const [results, setResults] = useState(null);
+    const [error, setError] = useState(null);
 
     // State to track the zip codes and radius input by the user
     const [zipCodes, setZipCodes] = useState('');
@@ -38,11 +39,12 @@ const SearchByZipcodes = ({ backendUrl }) => {
     // Function to validate zip codes
 
     const validateZipCodes = (input) => {
-        const trimmedInput = input.replace(/\s/g, '').replace(/,$/, '');
-        const zipCodePattern = /^(\d{5},)*\d{5}(,)?$/;
+        // Remove all whitespace and trailing commas
+        const trimmedInput = input.replace(/\s/g, '').replace(/,+$/, '');
+        const zipCodePattern = /^(\d{5},)*\d{5}$/;
         const isValid = zipCodePattern.test(trimmedInput);
-        const zipCodeCount = trimmedInput.split(',').length;
-
+        const zipCodeCount = trimmedInput.split(',').filter(Boolean).length;
+    
         if (!isValid) {
             setInputError('Please enter valid zip codes (5 digits each, separated by commas).');
             return false;
@@ -69,6 +71,12 @@ const SearchByZipcodes = ({ backendUrl }) => {
         }
       setMessages([]);
       setResults(null);
+
+    // Clean and filter the zip codes
+    const cleanedZipCodes = zipCodes
+        .replace(/\s/g, '')
+        .split(',')
+        .filter(zip => zip.length === 5 && /^\d{5}$/.test(zip));
   
       const response = await fetch(`${backendUrl}/search_carwashes_zipcodes`, {
           method: 'POST',
@@ -115,6 +123,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
                         setResults(data);
                     }
                 } catch (error) {
+                    setError('Error parsing JSON:', error);
                     console.error('Error parsing JSON:', error);
                 }
               }
@@ -196,8 +205,8 @@ const SearchByZipcodes = ({ backendUrl }) => {
             </form>
 
             <div className="mt-4 justify-center text-center flex col gap-x-12">
-                <div className="bg-gray-100 p-4 h-[50vh] w-[25vw] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto shadow-md border-2 border-gray-300">
                     {messages.length > 0 && (
+                        <div className="bg-gray-100 p-4 h-[55vh] w-[25vw] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto shadow-md border-2 border-gray-300">
                             <div className="mt-4">
                                 <h2 className="text-xl font-semibold mb-2">Search Logs:</h2>
                                 <ul className="list-none pl-10 text-left">
@@ -211,15 +220,23 @@ const SearchByZipcodes = ({ backendUrl }) => {
                                     ))}
                                 </ul>
                             </div>
-                        )}
-                </div>
+                        </div>
+                     )}
                 {results && (
-                    <div className="bg-gray-100 p-4 h-[50vh] w-[40vw] rounded text-sm text-gray-700 overflow-x-aut shadow-md border-2 border-gray-300">
+                    <div className="bg-gray-100 p-4 h-[55vh] w-[40vw] rounded text-sm text-gray-700 overflow-x-aut shadow-md border-2 border-gray-300">
                         <h2 className="text-xl font-semibold mb-2">Results:</h2>
                         <p className="text-md font-semibold italic mb-2">Searched {results.num_zip_codes} zip codes, found {results.num_results} car washes in {results.exc_time} seconds.</p>
-                        <pre className="bg-gray-200 p-4 h-[35vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto text-left">
+                        <pre className="bg-gray-200 p-4 h-[40vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto text-left">
                             {JSON.stringify(results, null, 2)}
                         </pre>
+                        {!error && (
+                            <button
+                            onClick={downloadCSV}
+                            className="mt-4 bg-charcoal hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
+                            >
+                            Download CSV
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
