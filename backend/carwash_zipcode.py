@@ -6,7 +6,9 @@ import requests
 from utils import check_api_call_limit
 
 # Lets try to use a generator so we can stream some progress statements to the frontend
-def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zipcode_radius: int = 5000):
+def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], 
+                                   includedTypes: str | list[str],
+                                   zipcode_radius: int = 5000):
     """
     Fetch car washes for one or more zip codes using Google Places API Nearby Search.
     Includes deduplication based on place_id and streams updates.
@@ -27,6 +29,14 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
         zip_codes_list = [zip_codes]
     else:
         zip_codes_list = zip_codes
+
+
+    # If includedTypes is a string convert it to a list
+    if isinstance(includedTypes, str):
+        included_types_list = [includedTypes]
+    else:
+        included_types_list = includedTypes
+
 
     # Start the stream with a progress message
     yield json.dumps({
@@ -65,12 +75,7 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], zip
         }
 
         params = {
-        "includedTypes": [
-            "car_wash",
-            "car_repair",
-            "gas_station",
-            "rest_stop"
-        ],
+        "includedTypes": included_types_list,
         "maxResultCount": 20,
         "locationRestriction": {
             "circle": {

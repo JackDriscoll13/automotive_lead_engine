@@ -23,6 +23,7 @@ class SearchCarwashesRequest(BaseModel):
 
 class SearchZipCodesRequest(BaseModel):
     zip_codes: str | list[str]
+    included_types: str | list[str]
     radius: int = 5000
 
 
@@ -70,7 +71,8 @@ def search_carwashes(request: SearchCarwashesRequest):
 @app.post("/search_carwashes_zipcodes")
 async def search_carwashes(request: SearchZipCodesRequest):
     print('Zip codes: ', request.zip_codes)
+    print('Included types: ', request.included_types)
     # This endpoint is basically a generator that returns a yield of data to the frontend through a streaming response
-    return StreamingResponse(generate_carwashes_by_zipcode2(GOOGLE_API_KEY, request.zip_codes, request.radius), media_type="text/event-stream")
+    return StreamingResponse(generate_carwashes_by_zipcode2(GOOGLE_API_KEY, request.zip_codes, request.included_types, request.radius), media_type="text/event-stream")
     
 
