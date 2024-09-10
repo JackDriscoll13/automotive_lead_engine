@@ -181,9 +181,9 @@ const SearchByZipcodes = ({ backendUrl }) => {
                  </div>
                  <div className="flex flex-row items-top">
                     {/* Included Types */}
-                    <div className="w-full mr-2 ml-2 flex-col items-center justify-center border-2 border-gray-300 rounded-md p-2">
+                    <div className="w-full mr-2 ml-2 flex-col items-center justify-center border-gray-300 rounded-md p-2">
                     <div className="flex justify-center">
-                        <label className="block text-sm font-medium text-gray-700 mb-2 text-center">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2 text-center">
                             Select Business Types:
                         </label>
                         <div className="relative group ml-1">
@@ -197,13 +197,13 @@ const SearchByZipcodes = ({ backendUrl }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-wrap justify-center gap-2 mt-2">
+                    <div className="flex flex-wrap justify-left gap-2 mt-2 ml-4">
                         {Object.entries(selectedTypes).map(([type, isSelected]) => (
                             <button
                                 key={type}
                                 type="button"
                                 onClick={() => handleTypeChange(type)}
-                                className={`px-2 py-1 rounded-md text-xs font-medium transition-colors duration-200 ease-in-out
+                                className={`px-2 py-1 rounded-md text-xs font-medium transition-colors duration-200 ease-in-out text-left items-left
                                     ${isSelected 
                                         ? 'bg-green-500 text-white' 
                                         : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
@@ -215,10 +215,10 @@ const SearchByZipcodes = ({ backendUrl }) => {
                     </div>
                 </div>
                     {/* Radius input and slider */}
-                    <div className="w-full mr-2 ml-2 flex-col items-center justify-center border-2 border-gray-300 rounded-md p-2">
+                    <div className="w-full mr-2 ml-2 flex-col items-center justify-center border-gray-300 rounded-md p-2">
                         <div className="flex justify-center">
-                        <label htmlFor="radius" className="block text-sm font-medium text-gray-700 mb-2 text-center">
-                            Adjust search radius:
+                        <label htmlFor="radius" className="block text-sm font-semibold text-gray-700 mb-2 text-center">
+                            Adjust Search Radius:
                         </label>
                         <div className="relative group ml-1">
                             <FaInfoCircle className="text-gray-500 hover:text-gray-700 cursor-help"/>
@@ -228,7 +228,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
                             </div>
                         </div>
                     </div>
-                        <div className="text-sm text-center">{radius} m</div>
+                        <div className="text-sm text-center mt-2">{radius} m</div>
                     <div className="flex justify-center">
                         <input
                             type="range"
@@ -249,10 +249,10 @@ const SearchByZipcodes = ({ backendUrl }) => {
                     </div>
                     </div>
                 </div>
-                <div className="flex justify-center mt-5">
+                <div className="flex justify-center mt-6">
                     <button
                         type="submit"
-                        className="w-48 flex-shrink-0 bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700 text-xl border-4 text-white py-1 px-2 rounded"
+                        className="w-60 flex-shrink-0 bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700 text-xl border-4 text-white py-1 px-2 rounded"
                     >
                         Search
                     </button>
