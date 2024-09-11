@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { downloadCSV } from './leadFinderUtils';
 // FontAwesome for tooltip/info icon
 import { FaInfoCircle } from 'react-icons/fa';
-
+import { LoadingSpinner } from './leadFinderUtils';
 
 // Logging functions (with timestamp)
 const getTimestamp = () => new Date().toISOString();
@@ -10,7 +10,8 @@ const log = (message, data = null) => console.log(`[${getTimestamp()}] ${message
 
 
 const SearchByZipcodes = ({ backendUrl }) => {
-
+    // State to track the loading state, messages, results, and error
+    const [isLoading, setIsLoading] = useState(false);
     const [messages, setMessages] = useState([]);
     const [results, setResults] = useState(null);
     const [error, setError] = useState(null);
@@ -30,6 +31,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
     
     // Input states, state to track input validity, input error to display, and input textarea height,
     const [isValidInput, setIsValidInput] = useState(true);
+    const [validTypes, setValidTypes] = useState(true);
     const [inputError, setInputError] = useState('');
     const textareaRef = useRef(null);
 
@@ -45,6 +47,12 @@ const SearchByZipcodes = ({ backendUrl }) => {
     useEffect(() => {
         adjustTextareaHeight();
     }, [zipCodes]);
+
+    // Making sure at least one type is selected
+    useEffect(() => {
+        const atLeastOneTypeSelected = Object.values(selectedTypes).some(value => value);
+        setValidTypes(atLeastOneTypeSelected);
+    }, [selectedTypes]);
 
     // Function to validate zip codes
     const validateZipCodes = (input) => {
@@ -82,6 +90,11 @@ const SearchByZipcodes = ({ backendUrl }) => {
             alert(inputError);
             return;
         }
+        if (!validTypes) {
+            alert("Please select at least one business type.");
+            return;
+        }
+        setIsLoading(true);
         setMessages([]);
         setResults(null);
 
@@ -92,13 +105,24 @@ const SearchByZipcodes = ({ backendUrl }) => {
             .filter(zip => zip.length === 5 && /^\d{5}$/.test(zip));
             
         
-        console.log('Sending request to backend with cleaned zip codes:', cleanedZipCodes, ' and radius:', radius);
+        const selectedTypesList = Object.entries(selectedTypes)
+            .filter(([_, isSelected]) => isSelected)
+            .map(([type, _]) => type);
+    
+        console.log('Sending the following data to the backend:');
+        console.log('cleanedZipCodes:', cleanedZipCodes);
+        console.log('radius:', radius);
+        console.log('selectedTypesList:', selectedTypesList);
         const response = await fetch(`${backendUrl}/search_carwashes_zipcodes`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ zip_codes: cleanedZipCodes, radius: radius }),
+            body: JSON.stringify({ 
+                zip_codes: cleanedZipCodes, 
+                included_types: selectedTypesList,
+                radius: radius,
+            }),
         });
     
         log('Response received:', response);
@@ -144,15 +168,16 @@ const SearchByZipcodes = ({ backendUrl }) => {
                 }
             }
         }
+        setIsLoading(false);
     };
 
     return (
-        <div className="container mx-auto mt-6 p-4">
-           <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="max-w-md mx-auto mb-12">
-                <div className="flex flex-col items-center border-b-2 border-charcoal py-4 shadow-md">
+        <div className="container mx-auto mt-4">
+           <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="max-w-md mx-auto mb-8">
+                <div className="flex flex-col items-center pb-4 shadow-md">
                     <div className="w-full mb-4 flex flex-col items-center">
                     <div className="flex">
-                        <label htmlFor="zipCodes" className="block text-lg font-medium text-gray-700 mb-2 text-center">
+                        <label htmlFor="zipCodes" className="block text-md font-semibold text-gray-700 mb-2 text-center">
                             Enter zip codes:
                         </label>
                         <div className="relative group ml-1">
@@ -197,13 +222,13 @@ const SearchByZipcodes = ({ backendUrl }) => {
                             </div>
                         </div>
                     </div>
-                    <div className="flex flex-wrap justify-left gap-2 mt-2 ml-4">
+                    <div className="flex flex-wrap justify-left gap-2 mt-1">
                         {Object.entries(selectedTypes).map(([type, isSelected]) => (
                             <button
                                 key={type}
                                 type="button"
                                 onClick={() => handleTypeChange(type)}
-                                className={`px-2 py-1 rounded-md text-xs font-medium transition-colors duration-200 ease-in-out text-left items-left
+                                className={`px-1 py-1 rounded-md text-xs w-20 ml-2 font-medium transition-colors duration-200 ease-in-out text-center items-left
                                     ${isSelected 
                                         ? 'bg-green-500 text-white' 
                                         : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
@@ -213,6 +238,11 @@ const SearchByZipcodes = ({ backendUrl }) => {
                             </button>
                         ))}
                     </div>
+                    {!validTypes && (
+                        <p className="text-red-500 text-xs mt-1 text-center">
+                            Please select at least one business type.
+                        </p>
+                    )}
                 </div>
                     {/* Radius input and slider */}
                     <div className="w-full mr-2 ml-2 flex-col items-center justify-center border-gray-300 rounded-md p-2">
@@ -252,9 +282,21 @@ const SearchByZipcodes = ({ backendUrl }) => {
                 <div className="flex justify-center mt-6">
                     <button
                         type="submit"
-                        className="w-60 flex-shrink-0 bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700 text-xl border-4 text-white py-1 px-2 rounded"
+                        disabled={isLoading}
+                        className={`w-60 flex-shrink-0 text-xl border-4 text-white py-1 px-2 rounded flex items-center justify-center ${
+                            isLoading
+                                ? 'bg-gray-500 border-gray-500 cursor-not-allowed'
+                                : 'bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700'
+                        }`}
                     >
-                        Search
+                        {isLoading ? (
+                            <>
+                                <LoadingSpinner className="w-5 h-5 mr-2" />
+                                Searching...
+                            </>
+                        ) : (
+                            'Search'
+                        )}
                     </button>
                 </div>
                 </div>
@@ -262,7 +304,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
 
             <div className="mt-4 justify-center text-center flex col gap-x-12">
                     {messages.length > 0 && (
-                        <div className="bg-gray-100 p-4 h-[55vh] w-[25vw] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto shadow-md border-2 border-gray-300">
+                        <div className="bg-gray-100 p-4 h-[45vh] w-[25vw] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto shadow-md border-2 border-gray-300">
                             <div className="mt-4">
                                 <h2 className="text-xl font-semibold mb-2">Search Logs:</h2>
                                 <ul className="list-none pl-10 text-left">
@@ -279,10 +321,10 @@ const SearchByZipcodes = ({ backendUrl }) => {
                         </div>
                      )}
                 {results && (
-                    <div className="bg-gray-100 p-4 h-[55vh] w-[40vw] rounded text-sm text-gray-700 overflow-x-aut shadow-md border-2 border-gray-300">
+                    <div className="bg-gray-100 p-4 h-[45vh] w-[40vw] rounded text-sm text-gray-700 overflow-x-aut shadow-md border-2 border-gray-300">
                         <h2 className="text-xl font-semibold mb-2">Results:</h2>
                         <p className="text-md font-semibold italic mb-2">Searched {results.num_zip_codes} zip codes, found {results.num_results} car washes in {results.exc_time} seconds.</p>
-                        <pre className="bg-gray-200 p-4 h-[40vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto text-left">
+                        <pre className="bg-gray-200 p-4 h-[30vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto text-left">
                             {JSON.stringify(results, null, 2)}
                         </pre>
                         {!error && (

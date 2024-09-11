@@ -1,6 +1,14 @@
 // Utility functions for the lead finder app
+// Loading spinner
+export const LoadingSpinner = () => {
+    return (
+        <div className="flex justify-center items-center">
+            <div className="spinner"></div>
+        </div>
+    );
+};
 
-
+// Dowload CSV
 // Dowload CSV
 // Refactor these to a utils file
 export const convertToCSV = (data) => {
