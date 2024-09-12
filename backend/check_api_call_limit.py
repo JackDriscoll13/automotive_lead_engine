@@ -4,7 +4,8 @@ import json
 import os
 from datetime import datetime
 
-def check_api_call_limit_new(endpoint_name:str, daily_limit:int=800, monthly_limit:int=5800):
+def check_api_call_limit_new(search_count_label:str,endpoint_name:str, 
+                             daily_limit:int=800, monthly_limit:int=5800):
     """
     Check if the API call limit has been reached for a specific endpoint.
 
@@ -13,6 +14,7 @@ def check_api_call_limit_new(endpoint_name:str, daily_limit:int=800, monthly_lim
     to persist call counts across application restarts.
 
     Args:
+        search_count_label (str): Name of the search feature. Used to increment the search count in the data file. Either "regional_total" or "zip_code_total"
         endpoint_name (str): A description or identifier for the API endpoint. Either "nearby_search_calls" or "text_search_calls"
         daily_limit (int, optional): Maximum number of calls allowed per day. Defaults to 800.
         monthly_limit (int, optional): Maximum number of calls allowed per month. Defaults to 5800.
@@ -77,6 +79,8 @@ def check_api_call_limit_new(endpoint_name:str, daily_limit:int=800, monthly_lim
     print(f"The new counts are: {data}")
     print(f"The full file is: {all_data}")
     print(f"The endpoint name is: {endpoint_name}")
+
+    all_data["app_search_counts"][search_count_label] += 1
     all_data[endpoint_name] = data
     new_file = all_data
     print(f"The new file will be: {new_file}")
