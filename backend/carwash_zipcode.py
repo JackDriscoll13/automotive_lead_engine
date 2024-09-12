@@ -3,8 +3,8 @@ from fastapi.responses import StreamingResponse
 import googlemaps
 import json
 import requests
-from utils import check_api_call_limit
-
+#from utils import check_api_call_limit
+from check_api_call_limit import check_api_call_limit_new
 # Lets try to use a generator so we can stream some progress statements to the frontend
 def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], 
                                    includedTypes: str | list[str],
@@ -54,6 +54,10 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str],
         yield json.dumps({"type": "progress", "message": f"Getting coordinates for car washes in {zip_code}"}) + "\n"
         try:
             # Geocode the zip code to get the latitude and longitude
+            success, message, counts = check_api_call_limit_new("geocode_calls", daily_limit=1000000, monthly_limit=10000)
+            if not success:
+                yield json.dumps({"error": f"Limit exceeded: {message}. Total calls: {counts['total_calls']}, Monthly calls: {counts['monthly_calls']}, Daily calls: {counts['daily_calls']}."}) + "\n"
+                return
             geocode_result = gmaps.geocode(f"{zip_code}, USA")
             if not geocode_result:
                 yield json.dumps({"type": "progress", "message": f"Could not find coordinates for zip code {zip_code}"}) + "\n"
@@ -94,7 +98,7 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str],
         num_car_washes_found = 0
         while True:
             # We check if we've exceeded our api call limit, if so we stream an error message and break out of the loop 
-            success, message, counts = check_api_call_limit("nearby_search", daily_limit=800, monthly_limit=3800)
+            success, message, counts = check_api_call_limit_new("nearby_search_calls", daily_limit=800, monthly_limit=3800)
             if not success:
                 yield json.dumps({"error": f"Limit exceeded: {message}. Total calls: {counts['total_calls']}, Monthly calls: {counts['monthly_calls']}, Daily calls: {counts['daily_calls']}."}) + "\n"
                 return
@@ -118,15 +122,11 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str],
                 yield json.dumps({"type": "warning", 
                                   "message": f"Found {len(results['places'])} (MAX!) results in {zip_code}. This probably means the radius is too large and you did not capture all car washes within this zip code. You might want to try a smaller radius."}) + "\n"
 
-    
-
-  
             
             # Iterate over the results and add them to the all_car_washes dictionary
             for place in results["places"]:
                 num_car_washes_found += 1
                 place_id = place['id']
-        
 
                 # If the place_id is not in the all_car_washes dictionary, we add it
                 if place_id not in all_car_washes:
