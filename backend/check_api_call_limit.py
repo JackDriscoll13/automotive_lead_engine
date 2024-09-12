@@ -77,7 +77,8 @@ def check_api_call_limit_new(endpoint_name:str, daily_limit:int=800, monthly_lim
     print(f"The new counts are: {data}")
     print(f"The full file is: {all_data}")
     print(f"The endpoint name is: {endpoint_name}")
-    new_file = all_data[endpoint_name] = data
+    all_data[endpoint_name] = data
+    new_file = all_data
     print(f"The new file will be: {new_file}")
 
     # We can update the file with the new counts
