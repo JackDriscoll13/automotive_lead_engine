@@ -311,7 +311,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
                                     {messages.map((message, index) => (
                                         <li key={index} className="flex items-start">
                                             <span className="mr-2">&mdash;</span>
-                                            <span className={message.type === 'warning' ? 'text-red-600 font-semibold' : ''}>
+                                            <span className={message.type === 'warning' ? 'text-red-600' : ''}>
                                                 {message.message}
                                             </span>
                                         </li>
