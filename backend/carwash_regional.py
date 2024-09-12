@@ -1,6 +1,7 @@
 import requests
 import time
-from utils import check_api_call_limit
+#from utils import check_api_call_limit
+from check_api_call_limit import  check_api_call_limit_new
 
 def get_all_car_washes(api_key, region):
     """
@@ -42,7 +43,7 @@ def get_all_car_washes(api_key, region):
 
     while True:
         # Check API call limit before making the next request
-        success, message, counts = check_api_call_limit("google_maps_api_key", daily_limit=600, monthly_limit=5800)
+        success, message, counts = check_api_call_limit_new("text_search_calls", daily_limit=600, monthly_limit=5800)
         if not success:
             return {"error": f"Limit exceeded: {message}. Total calls: {counts['total_calls']}, Monthly calls: {counts['monthly_calls']}, Daily calls: {counts['daily_calls']}."}
 
