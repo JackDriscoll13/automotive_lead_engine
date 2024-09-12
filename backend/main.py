@@ -12,6 +12,7 @@ from dotenv import load_dotenv
 # Local Imports 
 from carwash_regional import get_all_car_washes
 from carwash_zipcode import generate_carwashes_by_zipcode2
+from check_api_call_limit import increment_app_search_counts
 
 
 
@@ -57,6 +58,9 @@ def search_carwashes(request: SearchCarwashesRequest):
     """Get a list of car washes in a region"""
     # print(f"api key: {GOOGLE_API_KEY}")
     start_time = time.time()
+    # Increment the regional total
+    increment_app_search_counts("regional_total")
+    # We call the function that gets all the car washes in a region
     car_washes_result = get_all_car_washes(GOOGLE_API_KEY, request.region)
     if "error" in car_washes_result:
         # Return or handle the error message as needed for the frontend
@@ -72,6 +76,7 @@ def search_carwashes(request: SearchCarwashesRequest):
 async def search_carwashes(request: SearchZipCodesRequest):
     print('Zip codes: ', request.zip_codes)
     print('Included types: ', request.included_types)
+    increment_app_search_counts("zip_code_total")
     # This endpoint is basically a generator that returns a yield of data to the frontend through a streaming response
     return StreamingResponse(generate_carwashes_by_zipcode2(GOOGLE_API_KEY, request.zip_codes, request.included_types, request.radius), media_type="text/event-stream")
     

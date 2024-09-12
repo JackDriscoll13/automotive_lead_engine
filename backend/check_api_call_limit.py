@@ -4,6 +4,21 @@ import json
 import os
 from datetime import datetime
 
+
+def increment_app_search_counts(search_label:str):
+    """
+    Increment the regional total for a specific feature.
+
+    Args:
+        search_label (str): The name of the search label to increment. Either "regional_total" or "zip_code_total"
+    """
+    filename = "search_counts_all.json"
+    with open(filename, "r") as file:
+        data = json.load(file)
+    data["app_search_counts"][search_label] += 1
+    with open(filename, "w") as file:
+        json.dump(data, file)
+    
 def check_api_call_limit_new(endpoint_name:str, 
                              daily_limit:int=800, monthly_limit:int=5800):
     """
