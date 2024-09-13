@@ -239,7 +239,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
                                 onClick={() => handleTypeChange(type)}
                                 className={`px-1 py-1 rounded-md text-xs w-20 ml-2 font-medium transition-colors duration-200 ease-in-out text-center items-left
                                     ${isSelected 
-                                        ? 'bg-green-500 text-white' 
+                                        ? 'bg-blue-900 text-white' 
                                         : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
                                     } border border-transparent`}
                             >
@@ -267,8 +267,8 @@ const SearchByZipcodes = ({ backendUrl }) => {
                             </div>
                         </div>
                     </div>
-                        <div className="text-sm text-center mt-2">{radius} m</div>
-                    <div className="flex justify-center">
+                    <div className="text-sm text-center mt-2">{radius} m</div>
+                    <div className="flex justify-center mt-2">
                         <input
                             type="range"
                             min="2000"
@@ -276,7 +276,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
                             step="100"
                             value={radius}
                             onChange={(e) => setRadius(parseInt(e.target.value))}
-                            className="w-1/2 mr-2 text-center"
+                            className="w-3/4 mr-2 h-2 bg-gray-200 rounded-full appearance-none cursor-pointer accent-charcoal"
                         />
                     </div>
                     <div className="flex justify-center">

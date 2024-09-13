@@ -2,7 +2,6 @@ import React, {useState, useEffect } from 'react'
 import { downloadCSV } from './leadFinderUtils';
 
 const SearchByLocation = ({backendUrl} ) => {
-    console.log("Test backendUrl: ", backendUrl)
     const [location, setLocation] = useState('');
     const [results, setResults] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
@@ -87,12 +86,14 @@ const SearchByLocation = ({backendUrl} ) => {
               {JSON.stringify(results, null, 2)}
             </pre>
               {!error && (
+                <div className="flex justify-center mt-4">
                 <button
                   onClick={handleDownloadCSV}
                   className="mt-4 bg-charcoal hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Download CSV
                 </button>
+              </div>
               )}
             </div>
           )}
