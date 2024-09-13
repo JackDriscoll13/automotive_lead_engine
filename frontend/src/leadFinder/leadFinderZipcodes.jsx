@@ -174,7 +174,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
     const handleDownloadCSV = () => {
         console.log("Downloading CSV");
         if (results && results.results) {
-            downloadCSV(results.results, 'zip_code_results.csv');
+            downloadCSV(results.results, 'carwash_zipcode_results.csv');
         } else {
             console.error('No valid data available for CSV download');
         }

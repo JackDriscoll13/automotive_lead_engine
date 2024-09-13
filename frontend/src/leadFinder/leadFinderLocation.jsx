@@ -47,6 +47,15 @@ const SearchByLocation = ({backendUrl} ) => {
         setResultsLabel(location);
       }
     };
+
+  const handleDownloadCSV = () => {
+      console.log("Downloading CSV");
+      if (results && results.results) {
+          downloadCSV(results.results, 'carwash_location_results.csv');
+      } else {
+          console.error('No valid data available for CSV download');
+      }
+  };
   
     return ( 
         <div className="container mx-auto mt-6 p-4">
@@ -79,7 +88,7 @@ const SearchByLocation = ({backendUrl} ) => {
             </pre>
               {!error && (
                 <button
-                  onClick={downloadCSV}
+                  onClick={handleDownloadCSV}
                   className="mt-4 bg-charcoal hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
                 >
                   Download CSV
