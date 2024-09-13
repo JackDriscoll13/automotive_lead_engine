@@ -54,7 +54,8 @@ const Tab = ({ children }) => {
 const LeadFinder = () => {
   // For deployment with docker we use the backendUrl = "/api"
   // For local testing we use the backendUrl = "http://127.0.0.1:8000/"
-    const backendUrl = "http://127.0.0.1:8000";
+    //const backendUrl = "http://127.0.0.1:8000";
+    const backendUrl = "/api";
    
     return (
       <div className="min-h-screen bg-gray-100">

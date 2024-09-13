@@ -10,5 +10,5 @@ __pycache__/
 
 .env
 google_maps_api_key_calls.json
-search_counts_all.json
+nearby_search_calls.json
 zipcodes/
