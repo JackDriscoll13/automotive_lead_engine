@@ -171,6 +171,15 @@ const SearchByZipcodes = ({ backendUrl }) => {
         setIsLoading(false);
     };
 
+    const handleDownloadCSV = () => {
+        console.log("Downloading CSV");
+        if (results && results.results) {
+            downloadCSV(results.results, 'zip_code_results.csv');
+        } else {
+            console.error('No valid data available for CSV download');
+        }
+    };
+
     return (
         <div className="container mx-auto mt-4">
            <form onSubmit={(e) => { e.preventDefault(); handleSearch(); }} className="max-w-md mx-auto mb-8">
@@ -329,7 +338,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
                         </pre>
                         {!error && (
                             <button
-                            onClick={downloadCSV}
+                            onClick={handleDownloadCSV}
                             className="mt-4 bg-charcoal hover:bg-gray-700 text-white font-bold py-2 px-4 rounded"
                             >
                             Download CSV

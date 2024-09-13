@@ -32,25 +32,20 @@ export const convertToCSV = (data) => {
     return csvRows.join('\n');
   };
 
-  export const downloadCSV = () => {
-    if (!results) return;
-
-    const csv = convertToCSV(results.results);
-    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-    const link = document.createElement('a');
-    // Format the Results label (first word in location + _carwashes.csv) (special characters removed)
-    function formatLabel(resultsLabel) {
-      if (resultsLabel) {
-        const firstWord = resultsLabel.split(' ')[0].replace(/[^a-zA-Z0-9]/g, '');
-        return `${firstWord}_carwashes.csv`;
-      }
-      return 'car_washes_carwashes.csv';
+  export const downloadCSV = (data, filename) => {
+    if (!data || !Array.isArray(data) || data.length === 0) {
+      console.error('Invalid data for CSV download');
+      return;
     }
-    const fileLabel = formatLabel(resultsLabel);
+  
+    const csvContent = convertToCSV(data);
+  
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
     if (link.download !== undefined) {
       const url = URL.createObjectURL(blob);
       link.setAttribute('href', url);
-      link.setAttribute('download', fileLabel);
+      link.setAttribute('download', filename);
       link.style.visibility = 'hidden';
       document.body.appendChild(link);
       link.click();
