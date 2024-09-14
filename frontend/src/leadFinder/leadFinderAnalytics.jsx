@@ -44,33 +44,57 @@ const AnalyticsPage = ({backendUrl}) => {
 
         fetchAnalytics();
     }, [backendUrl]); // Add any other dependencies if needed
+
+
     const chartData = {
         labels: ['Text Search Calls', 'Nearby Search Calls', 'Geocode Calls'],
         datasets: [
             {
                 label: 'Monthly API Calls',
                 data: [
-                    results?.text_search_calls?.monthly_count || 0,
-                    results?.nearby_search_calls?.monthly_count || 0,
-                    results?.geocode_calls?.monthly_count || 0
+                    results?.text_search_calls?.monthly_count_not_today || 0,
+                    results?.nearby_search_calls?.monthly_count_not_today || 0,
+                    results?.geocode_calls?.monthly_count_not_today || 0
                 ],
-                backgroundColor: 'rgba(54, 162, 235, 0.6)', // Single color for all bars
-                borderColor: 'rgba(54, 162, 235, 1)', // Single border color
+                backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1,
             },
+            {
+                label: 'Daily Text Search Calls',
+                data: [
+                    results?.text_search_calls?.daily_count || 0,
+                    results?.nearby_search_calls?.daily_count || 0,
+                    results?.geocode_calls?.daily_count || 0 
+                ],
+                backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                borderColor: 'rgba(255, 99, 132, 1)',
+                borderWidth: 1,
+            }
         ],
     };
-
+    
     const chartOptions = {
-        responsive: false,
+        responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: 'top',
             },
-            title: {
-                display: true,
-                text: 'Monthly API Usage',
-            },
+            tooltip: {
+                callbacks: {
+                    label: function(context) {
+                        let label = context.dataset.label || '';
+                        if (label) {
+                            label += ': ';
+                        }
+                        if (context.parsed.y !== null) {
+                            label += context.parsed.y;
+                        }
+                        return label;
+                    }
+                }
+            }
         },
         scales: {
             y: {
@@ -78,7 +102,11 @@ const AnalyticsPage = ({backendUrl}) => {
                 title: {
                     display: true,
                     text: 'Number of Calls'
-                }
+                },
+                stacked: true
+            },
+            x: {
+                stacked: true
             }
         }
     };
@@ -102,7 +130,9 @@ const AnalyticsPage = ({backendUrl}) => {
                 </div>
                 <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
                     <h2 className="text-2xl font-semibold mb-6 text-gray-700">Monthly API Usage</h2>
-                    <Bar data={chartData} options={chartOptions} />
+                    <div className="h-[400px] w-full">  {/* Add this container */}
+                        <Bar data={chartData} options={chartOptions} />
+                    </div>
                 </div>
             </>
             )}
