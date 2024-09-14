@@ -41,11 +41,29 @@ const AnalyticsPage = ({backendUrl}) => {
         fetchAnalytics();
     }, [backendUrl]); // Add any other dependencies if needed
 
-    return ( 
+    return (
         <div>
-            <h1>Analytics Page</h1>
-        </div>  
-    )
+            <h1>Analytics Dashboard</h1>
+            {results && (
+                <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
+                    <h2 className="text-2xl font-semibold mb-6 text-gray-700">Searches All Time</h2>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div className="bg-blue-50 rounded-lg p-6 transition-all duration-300 hover:shadow-md">
+                            <h3 className="text-lg font-medium text-gray-600 mb-2">Total Zip Code Searches</h3>
+                            <p className="text-4xl font-bold text-blue-600">{results['app_search_counts']['zip_code_total'] || 0}</p>
+                        </div>
+                        <div className="bg-green-50 rounded-lg p-6 transition-all duration-300 hover:shadow-md">
+                            <h3 className="text-lg font-medium text-gray-600 mb-2">Total General Location Searches</h3>
+                            <p className="text-4xl font-bold text-green-600">{results.totalGeneralLocationSearches || 0}</p>
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {/* ... existing results display ... */}
+        </div>
+
+    );
 }
 
 export default AnalyticsPage;

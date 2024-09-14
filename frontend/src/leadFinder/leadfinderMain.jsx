@@ -70,10 +70,10 @@ const LeadFinder = () => {
               <Tab label="Zip Code Search">
                 <SearchByZipcodes backendUrl={backendUrl}/>
               </Tab>
-              <Tab label="Usage Guide & Documentation">
+              <Tab label="Guide & Documentation">
                 <LeadFinderDocs/>
               </Tab>
-              <Tab label="Analytics">
+              <Tab label="App Analytics">
                 <AnalyticsPage backendUrl={backendUrl}/>
               </Tab>
             </Tabs>
