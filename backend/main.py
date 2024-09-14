@@ -6,6 +6,8 @@ from fastapi.responses import StreamingResponse
 import os
 import time
 import json
+from datetime import datetime
+
 # Env 
 from dotenv import load_dotenv
 
@@ -13,6 +15,7 @@ from dotenv import load_dotenv
 from carwash_regional import get_all_car_washes
 from carwash_zipcode import generate_carwashes_by_zipcode2
 from check_api_call_limit import increment_app_search_counts
+from retrieve_analytics import retrieve_analytics_data
 
 
 
@@ -84,12 +87,8 @@ async def search_carwashes(request: SearchZipCodesRequest):
 @app.get("/api_analytics")
 def api_analytics():
     """Get API analytics data"""
-    try:
-        with open('search_counts_all.json', 'r') as file:
-            analytics_data = json.load(file)
-        return analytics_data
-    except FileNotFoundError:
-        return {"error": "Analytics data file not found"}
-    except json.JSONDecodeError:
-        return {"error": "Error decoding analytics data"}
 
+    analytics_data = retrieve_analytics_data()
+
+    # Filter the data for the current date
+    return analytics_data
