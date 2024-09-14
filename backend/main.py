@@ -5,7 +5,7 @@ from fastapi.responses import StreamingResponse
 
 import os
 import time
-
+import json
 # Env 
 from dotenv import load_dotenv
 
@@ -79,5 +79,17 @@ async def search_carwashes(request: SearchZipCodesRequest):
     increment_app_search_counts("zip_code_total")
     # This endpoint is basically a generator that returns a yield of data to the frontend through a streaming response
     return StreamingResponse(generate_carwashes_by_zipcode2(GOOGLE_API_KEY, request.zip_codes, request.included_types, request.radius), media_type="text/event-stream")
-    
+
+
+@app.get("/api_analytics")
+def api_analytics():
+    """Get API analytics data"""
+    try:
+        with open('search_counts_all.json', 'r') as file:
+            analytics_data = json.load(file)
+        return analytics_data
+    except FileNotFoundError:
+        return {"error": "Analytics data file not found"}
+    except json.JSONDecodeError:
+        return {"error": "Error decoding analytics data"}
 
