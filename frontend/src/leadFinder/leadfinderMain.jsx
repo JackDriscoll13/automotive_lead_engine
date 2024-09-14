@@ -6,6 +6,7 @@ import '../index.css'
 import SearchByLocation from './leadFinderLocation';
 import SearchByZipcodes from './leadFinderZipcodes';
 import LeadFinderDocs from './leadFinderDocs';
+import AnalyticsPage from './leadFinderAnalytics';
 
 // Header component for the Application 
 const Header = () => {
@@ -71,6 +72,9 @@ const LeadFinder = () => {
               </Tab>
               <Tab label="Usage Guide & Documentation">
                 <LeadFinderDocs/>
+              </Tab>
+              <Tab label="Analytics">
+                <AnalyticsPage backendUrl={backendUrl}/>
               </Tab>
             </Tabs>
           </main>
