@@ -1,5 +1,6 @@
 import requests
 import time
+import json
 #from utils import check_api_call_limit
 from check_api_call_limit import  check_api_call_limit_new
 
@@ -40,6 +41,11 @@ def get_all_car_washes(api_key, region):
     all_car_washes = []
     next_page_token = None
     callcount = 0
+
+        # Read in the api_limit_config.json file
+    with open('api_limit_config.json', 'r') as file:
+        api_limits = json.load(file)
+        api_limits = api_limits["API_LIMITS"]
 
     while True:
         # Check API call limit before making the next request

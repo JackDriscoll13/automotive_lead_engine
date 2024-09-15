@@ -24,12 +24,16 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str],
     # Initialize the start time so we can calculate how long the function takes to run
     start_time = time.time()
 
+    # Read in the api_limit_config.json file
+    with open('api_limit_config.json', 'r') as file:
+        api_limits = json.load(file)
+        api_limits = api_limits["API_LIMITS"]
+
     # If the zip code is a string convert it to a list
     if isinstance(zip_codes, str):
         zip_codes_list = [zip_codes]
     else:
         zip_codes_list = zip_codes
-
 
     # If includedTypes is a string convert it to a list
     if isinstance(includedTypes, str):
@@ -54,7 +58,7 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str],
         yield json.dumps({"type": "progress", "message": f"Getting coordinates for car washes in {zip_code}"}) + "\n"
         try:
             # Geocode the zip code to get the latitude and longitude
-            success, message, counts = check_api_call_limit_new("geocode_calls", daily_limit=1000000, monthly_limit=10000)
+            success, message, counts = check_api_call_limit_new("geocode_calls", daily_limit=api_limits["GEOCODE"]["DAILY"], monthly_limit=api_limits["GEOCODE"]["DAILY"])
             if not success:
                 yield json.dumps({"error": f"Limit exceeded: {message}. Total calls: {counts['total_calls']}, Monthly calls: {counts['monthly_calls']}, Daily calls: {counts['daily_calls']}."}) + "\n"
                 return
@@ -98,7 +102,7 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str],
         num_car_washes_found = 0
         while True:
             # We check if we've exceeded our api call limit, if so we stream an error message and break out of the loop 
-            success, message, counts = check_api_call_limit_new("nearby_search_calls", daily_limit=800, monthly_limit=3800)
+            success, message, counts = check_api_call_limit_new("nearby_search_calls", daily_limit=api_limits["NEARBY_SEARCH"]["DAILY"], monthly_limit=api_limits["NEARBY_SEARCH"]["MONTHLY"])
             if not success:
                 yield json.dumps({"error": f"Limit exceeded: {message}. Total calls: {counts['total_calls']}, Monthly calls: {counts['monthly_calls']}, Daily calls: {counts['daily_calls']}."}) + "\n"
                 return
