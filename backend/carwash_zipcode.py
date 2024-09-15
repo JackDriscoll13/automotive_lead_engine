@@ -41,7 +41,6 @@ def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str],
     else:
         included_types_list = includedTypes
 
-
     # Start the stream with a progress message
     yield json.dumps({
         "type": "progress",

@@ -24,6 +24,11 @@ def get_all_car_washes(api_key, region):
         - Searches for "car wash and car detailing" businesses.
     """
 
+    # Read in the api_limit_config.json file
+    with open('api_limit_config.json', 'r') as file:
+        api_limits = json.load(file)
+        api_limits = api_limits["API_LIMITS"]
+
     base_url = "https://places.googleapis.com/v1/places:searchText"
     
     # These headers: we pass the api key, we pass the field mask
@@ -33,6 +38,7 @@ def get_all_car_washes(api_key, region):
         "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.rating,places.location,places.id,places.nationalPhoneNumber,places.websiteUri,nextPageToken"
     }
     
+    # Define the text query, which is hard coded for now.
     data = {
         "textQuery": f"car wash and car detailing {region}",
         "languageCode": "en"
@@ -42,21 +48,17 @@ def get_all_car_washes(api_key, region):
     next_page_token = None
     callcount = 0
 
-        # Read in the api_limit_config.json file
-    with open('api_limit_config.json', 'r') as file:
-        api_limits = json.load(file)
-        api_limits = api_limits["API_LIMITS"]
-
     while True:
         # Check API call limit before making the next request
-        success, message, counts = check_api_call_limit_new("text_search_calls", daily_limit=600, monthly_limit=5800)
+        success, message, counts = check_api_call_limit_new("text_search_calls", daily_limit=api_limits["TEXT_SEARCH"]["DAILY"], monthly_limit=api_limits["TEXT_SEARCH"]["MONTHLY"])
         if not success:
             return {"error": f"Limit exceeded: {message}. Total calls: {counts['total_calls']}, Monthly calls: {counts['monthly_calls']}, Daily calls: {counts['daily_calls']}."}
 
-
+        # If there is a next page token, add it to the data
         if next_page_token:
             data["pageToken"] = next_page_token
         
+        # Make the API call
         response = requests.post(base_url, json=data, headers=headers)
         results = response.json()
         places = results.get("places", [])
