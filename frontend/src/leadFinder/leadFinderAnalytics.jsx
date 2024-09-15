@@ -59,10 +59,16 @@ const AnalyticsPage = ({backendUrl}) => {
         const now = new Date();
         return now.toLocaleString('default', { month: 'long', year: 'numeric' });
       };
+
+    const getCurrentMonthAbv = () => {
+        const now = new Date();
+        return now.toLocaleString('default', { month: 'short', year: 'numeric' });
+    }
     
     const currentmonth = getCurrentMonth()
+    const currentmonthabv = getCurrentMonthAbv()
     //
-    const getPercentage = (value, limit) => (value / limit) * 100;
+    const getPercentage = (value, limit) => Math.round((value / limit) * 10000) / 100;
 
     // Function to round up to the nearest 100
     const roundUpToNearest100 = (num) => Math.ceil(num / 100) * 100;
@@ -81,7 +87,7 @@ const AnalyticsPage = ({backendUrl}) => {
         labels: ['Text Search Calls', 'Nearby Search Calls', 'Geocode Calls'],
         datasets: [
             {
-                label: `API Calls ${currentmonth}`,
+                label: `API Calls ${currentmonthabv}`,
                 data: [
                     results?.text_search_calls?.monthly_count_not_today || 0,
                     results?.nearby_search_calls?.monthly_count_not_today || 0,
@@ -105,7 +111,7 @@ const AnalyticsPage = ({backendUrl}) => {
                 yAxisID: 'y',
             },
             {
-                label: 'Percentage of API Limit',
+                label: '% Monthly API Limit',
                 data: [
                     getPercentage((results?.text_search_calls?.monthly_count_not_today || 0) + (results?.text_search_calls?.daily_count || 0), TEXT_SEARCH_LIMIT),
                     getPercentage((results?.nearby_search_calls?.monthly_count_not_today || 0) + (results?.nearby_search_calls?.daily_count || 0), NEARBY_SEARCH_LIMIT),
@@ -127,7 +133,7 @@ const AnalyticsPage = ({backendUrl}) => {
                 position: 'top',
                 labels: {
                     sort: (a, b) => {
-                        const order = ['API Calls Today', `API Calls ${currentmonth}`, 'Percentage of API Limit'];
+                        const order = ['API Calls Today', `API Calls ${currentmonthabv}`, '% Monthly API Limit'];
                         return order.indexOf(a.text) - order.indexOf(b.text);
                     }
                 }
@@ -206,6 +212,9 @@ const AnalyticsPage = ({backendUrl}) => {
                     </p>
                     <div className="h-[400px] w-full">
                         <Bar data={chartData} options={chartOptions} />
+                    </div>
+                    <div className="flex justify-left mt-4 ml-10">
+                        <p className="text-xs text-black">Current Api Limits: Text Search (1000/day, 3800/month), Nearby Search (1000/day, 3800/month), Geocode (1000/day, 3800/month)</p>
                     </div>
                 </div>
             </>
