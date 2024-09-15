@@ -1,13 +1,21 @@
 import React, {useState, useEffect } from 'react'
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, annotationPlugin);
 
 const AnalyticsPage = ({backendUrl}) => {
+    // Component state 
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [results, setResults] = useState(null);
+
+
+    // 
+    const TEXT_SEARCH_LIMIT = 1000; // Replace with your actual limit
+    const NEARBY_SEARCH_LIMIT = 3800; // Replace with your actual limit
+    const GEOCODE_LIMIT = 3800; 
 
     useEffect(() => {
         const fetchAnalytics = async () => {
@@ -46,11 +54,34 @@ const AnalyticsPage = ({backendUrl}) => {
     }, [backendUrl]); // Add any other dependencies if needed
 
 
+
+    const getCurrentMonth = () => {
+        const now = new Date();
+        return now.toLocaleString('default', { month: 'long', year: 'numeric' });
+      };
+    
+    const currentmonth = getCurrentMonth()
+    //
+    const getPercentage = (value, limit) => (value / limit) * 100;
+
+    // Function to round up to the nearest 100
+    const roundUpToNearest100 = (num) => Math.ceil(num / 100) * 100;
+
+    // Calculate the maximum value for the y-axis
+    const calculateYAxisMax = () => {
+        const maxValue = Math.max(
+            (results?.text_search_calls?.monthly_count_not_today || 0) + (results?.text_search_calls?.daily_count || 0),
+            results?.nearby_search_calls?.monthly_count_not_today || 0,
+            results?.geocode_calls?.monthly_count_not_today || 0
+        );
+        return roundUpToNearest100(maxValue + 100);
+    };
+
     const chartData = {
         labels: ['Text Search Calls', 'Nearby Search Calls', 'Geocode Calls'],
         datasets: [
             {
-                label: 'Monthly API Calls',
+                label: `API Calls ${currentmonth}`,
                 data: [
                     results?.text_search_calls?.monthly_count_not_today || 0,
                     results?.nearby_search_calls?.monthly_count_not_today || 0,
@@ -59,17 +90,31 @@ const AnalyticsPage = ({backendUrl}) => {
                 backgroundColor: 'rgba(54, 162, 235, 0.6)',
                 borderColor: 'rgba(54, 162, 235, 1)',
                 borderWidth: 1,
+                yAxisID: 'y',
             },
             {
-                label: 'Daily Text Search Calls',
+                label: 'API Calls Today',
                 data: [
                     results?.text_search_calls?.daily_count || 0,
-                    results?.nearby_search_calls?.daily_count || 0,
-                    results?.geocode_calls?.daily_count || 0 
+                    results?.nearby_search_calls?.daily_count || 0, 
+                    results?.geocode_calls?.daily_count || 0
                 ],
                 backgroundColor: 'rgba(255, 99, 132, 0.6)',
                 borderColor: 'rgba(255, 99, 132, 1)',
                 borderWidth: 1,
+                yAxisID: 'y',
+            },
+            {
+                label: 'Percentage of API Limit',
+                data: [
+                    getPercentage((results?.text_search_calls?.monthly_count_not_today || 0) + (results?.text_search_calls?.daily_count || 0), TEXT_SEARCH_LIMIT),
+                    getPercentage((results?.nearby_search_calls?.monthly_count_not_today || 0) + (results?.nearby_search_calls?.daily_count || 0), NEARBY_SEARCH_LIMIT),
+                    getPercentage((results?.geocode_calls?.monthly_count_not_today || 0) + (results?.geocode_calls?.daily_count || 0), GEOCODE_LIMIT)
+                ],
+                backgroundColor: 'rgba(255, 223, 128, 0.6)',
+                borderColor: 'rgba(255, 223, 128, 1)',
+                borderWidth: 1,
+                yAxisID: 'y1',
             }
         ],
     };
@@ -80,6 +125,12 @@ const AnalyticsPage = ({backendUrl}) => {
         plugins: {
             legend: {
                 position: 'top',
+                labels: {
+                    sort: (a, b) => {
+                        const order = ['API Calls Today', `API Calls ${currentmonth}`, 'Percentage of API Limit'];
+                        return order.indexOf(a.text) - order.indexOf(b.text);
+                    }
+                }
             },
             tooltip: {
                 callbacks: {
@@ -90,6 +141,9 @@ const AnalyticsPage = ({backendUrl}) => {
                         }
                         if (context.parsed.y !== null) {
                             label += context.parsed.y;
+                            if (context.datasetIndex === 2) {
+                                label += '%';
+                            }
                         }
                         return label;
                     }
@@ -103,13 +157,28 @@ const AnalyticsPage = ({backendUrl}) => {
                     display: true,
                     text: 'Number of Calls'
                 },
-                stacked: true
+                stacked: true,
+                position: 'left',
+                max: calculateYAxisMax(),
+            },
+            y1: {
+                beginAtZero: true,
+                title: {
+                    display: true,
+                    text: 'Percentage of Limit'
+                },
+                position: 'right',
+                max: 100,
+                grid: {
+                    drawOnChartArea: false,
+                }
             },
             x: {
                 stacked: true
             }
-        }
+        },
     };
+    
 
     return (
         <div>
@@ -129,8 +198,13 @@ const AnalyticsPage = ({backendUrl}) => {
                     </div>
                 </div>
                 <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
-                    <h2 className="text-2xl font-semibold mb-6 text-gray-700">Monthly API Usage</h2>
-                    <div className="h-[400px] w-full">  {/* Add this container */}
+                    <h2 className="text-2xl font-semibold mb-1 text-gray-700">
+                        Monthly API Usage
+                    </h2>
+                    <p className="text-lg font-normal text-gray-600 mb-4">
+                        {currentmonth}
+                    </p>
+                    <div className="h-[400px] w-full">
                         <Bar data={chartData} options={chartOptions} />
                     </div>
                 </div>
