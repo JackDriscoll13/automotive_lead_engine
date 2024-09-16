@@ -10,7 +10,6 @@ const SearchByLocation = ({backendUrl} ) => {
     const [results, setResults] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [resultsLabel, setResultsLabel] = useState(null);
 
 
     const queryOptions = {
@@ -32,7 +31,6 @@ const SearchByLocation = ({backendUrl} ) => {
       setIsLoading(true);
       setResults(null);
       setError(null);
-      setResultsLabel(null);
 
       try {
         const response = await fetch(`${backendUrl}/search_carwashes_regions`, {
@@ -61,14 +59,13 @@ const SearchByLocation = ({backendUrl} ) => {
         console.error('There was a problem with the fetch operation:', error);
       } finally {
         setIsLoading(false);
-        setResultsLabel(location);
       }
     };
 
   const handleDownloadCSV = () => {
       console.log("Downloading CSV");
       if (results && results.results) {
-          downloadCSV(results.results, 'carwash_location_results.csv');
+          downloadCSV(results.results, `${location}_text_search_results.csv`);
       } else {
           console.error('No valid data available for CSV download');
       }
@@ -162,13 +159,13 @@ const SearchByLocation = ({backendUrl} ) => {
               </div>
             </div>
           </form>
-          {isLoading && <p className="text-center text-gray-700">Searching for {getSearchQuery()} {location}...</p>}
+          {isLoading && <p className="text-center text-gray-700">Searching for {getSearchQuery()} "{location}"...</p>}
           {error && <p className="text-center text-red-500">{error}</p>}
         
         {results && (
           <div className="max-w-2xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <h2 className="text-xl font-bold text-charcoal">Results for "{resultsLabel}":</h2>
-            <div className="text-xs mb-4">({results.num_results} carwashes/detailers returned in {results.exc_time} seconds)</div>
+            <h2 className="text-xl font-bold text-charcoal">Results for {getSearchQuery()} "{location}":</h2>
+            <div className="text-xs mb-4">({results.num_results} businesses returned in {results.exc_time} seconds)</div>
             <pre className="bg-gray-100 p-4 h-[55vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto">
               {JSON.stringify(results, null, 2)}
             </pre>

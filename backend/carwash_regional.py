@@ -40,13 +40,9 @@ def get_all_car_washes(api_key, region, query):
         "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.rating,places.location,places.id,places.nationalPhoneNumber,places.websiteUri,nextPageToken"
     }
     
-    # Define the text query, which is hard coded for now.
     # Strip quotation marks from the query parameter
-    print('query: ', query)
     query = query.replace('"', '')
-    print('query: ', query)
     text_query = f"{query} {region}"
-    print('text_query: ', text_query)
 
     data = {
         "textQuery": text_query,
