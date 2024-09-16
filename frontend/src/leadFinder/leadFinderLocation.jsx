@@ -166,7 +166,7 @@ const SearchByLocation = ({backendUrl} ) => {
           <div className="max-w-2xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <h2 className="text-xl font-bold text-charcoal">Results for {getSearchQuery()} "{location}":</h2>
             <div className="text-xs mb-4">({results.num_results} businesses returned in {results.exc_time} seconds)</div>
-            <pre className="bg-gray-100 p-4 h-[55vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto">
+            <pre className="bg-gray-100 p-4 h-[30vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto">
               {JSON.stringify(results, null, 2)}
             </pre>
               {!error && (
