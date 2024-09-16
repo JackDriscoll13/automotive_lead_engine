@@ -3,21 +3,7 @@
 import json
 import os
 from datetime import datetime
-
-
-def increment_app_search_counts(search_label:str):
-    """
-    Increment the regional total for a specific feature.
-
-    Args:
-        search_label (str): The name of the search label to increment. Either "regional_total" or "zip_code_total"
-    """
-    filename = "search_counts_all.json"
-    with open(filename, "r") as file:
-        data = json.load(file)
-    data["app_search_counts"][search_label] += 1
-    with open(filename, "w") as file:
-        json.dump(data, file)
+from utils import initialize_search_counts_file
     
 def check_api_call_limit_new(endpoint_name:str, 
                              daily_limit:int=800, monthly_limit:int=5800):
@@ -89,15 +75,9 @@ def check_api_call_limit_new(endpoint_name:str,
     elif data["monthly_count"] > monthly_limit:
         return False, "Monthly limit exceeded", counts
     
-    print("Updating the file with the new counts")
-    print(f"The new counts are: {data}")
-    print(f"The full file is: {all_data}")
-    print(f"The endpoint name is: {endpoint_name}")
-
     # We don't want to update the app_search_counts for geocode_calls, since that's a separate endpoint
     all_data[endpoint_name] = data
     new_file = all_data
-    print(f"The new file will be: {new_file}")
 
     # We can update the file with the new counts
     with open(filename, "w") as file:
@@ -106,34 +86,3 @@ def check_api_call_limit_new(endpoint_name:str,
 
 
 
-
-# Just in case the file is not there, we can initialize it with default values
-def initialize_search_counts_file(filename):
-    """
-    Initialize the search counts file with default values.
-    """
-    initial_data = {
-        "app_search_counts": {
-            "regional_total": 0,
-            "zip_code_total": 0
-        },
-        "nearby_search_calls": {
-            "total_count": 0,
-            "monthly_count": 0,
-            "daily_count": 0,
-            "last_call_date": datetime.now().strftime("%Y-%m-%d"),
-            "current_month": datetime.now().month
-        },
-        "text_search_calls": {
-            "total_count": 0,
-            "monthly_count": 0,
-            "daily_count": 0,
-            "last_call_date": datetime.now().strftime("%Y-%m-%d"),
-            "current_month": datetime.now().month
-        }
-    }
-
-    with open(filename, "w") as file:
-        json.dump(initial_data, file, indent=4)
-
-    return initial_data

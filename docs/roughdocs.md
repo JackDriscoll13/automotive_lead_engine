@@ -1,9 +1,4 @@
-
-
-
-
-
-# GOOGLE API ENDPOINTS
+# GOOGLE API ENDPOINTS and Pricing
  
 All API endpoints used in this application are from the (New) Google Places Api, details are here: 
 - [Places Documentation/Overview](https://developers.google.com/maps/documentation/places/web-service/op-overview): 
@@ -52,8 +47,20 @@ Total = 208$ per month which brings our cost to 8$ because of the free tier.
   
 # Text Search Feature
 
-Main Endpoints this feature uses: 
+Main Endpoints this feature uses:
+Text Search: 
+https://developers.google.com/maps/documentation/places/web-service/text-search
+(Places API NEW)
 
+How it works:
+- User inputs a search query
+- User inputs a location.
+- Application pings text search api, wraps results in a dictionary.
+  - If there is more than 20 results, the app grabs the nextPageToken and retreives the next results (MAX 60 results).
+- Wraps result in nice output and allows user to download csv. 
+
+Field Mask: 
+Reference the [carwash_zipcode.py](../backend/carwash_regional.py) file to examine and change our current field mask. 
 
 
 # ZIP Code Feature: 
@@ -76,6 +83,7 @@ How it works:
 - Google nearby endpoint returns car washes within a specific radius of that lat and lng. 
   - The radius represents the area in/around that zip code. It should be adjusted based on population density of the zip codes you are looking up. 
   - For example a rural area might have zip codes that cover larger areas, urban areas will have smaller zip codes. 
+- Note that, as of now, there is no pagnation in the nearby search feature, so *a maximum of 20 businesses can be returned per zip code*.
 
 Reasoning / Justification of Services: 
 **Converting zip codes to lat lng: **
@@ -108,10 +116,15 @@ Future Work on this Feature:
 The main think that might be useful to implement with this feature is some way of automatically retrieving the size or population density of the zip codes we are searching. If we could programaitcally select the search readius (rather than enter it manually as we are currently, that would be ideal.)
 
 
-# Analytics Page Feature 
+# Analytics Page
 
+I keep track of our API calls and search count in a simple local json file. [search_counts_all.json](../backend/search_counts_all.json)
 
-# Deployment  
+- I use the [check_api_call_limit.py](../backend/check_api_call_limit.py) before sending each request to check if we have reached our limit and also to update the file. 
+  - If we have reached our limit, the function returns early before updating the file and lets the application know that either a daily or monthly api limit has been reached. 
+- Everytime a user clicks a search button, the total search counts are incremented via the increment_app_search_count function, which lives in utils. 
+
+# Deployment
 
 
 
