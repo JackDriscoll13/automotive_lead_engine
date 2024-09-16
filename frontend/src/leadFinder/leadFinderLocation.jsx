@@ -1,4 +1,4 @@
-import React, {useState, } from 'react'
+import React, {useState, useEffect} from 'react'
 import { downloadCSV } from './leadFinderUtils';
 import { LoadingSpinner } from './leadFinderUtils';
 import { FaInfoCircle } from 'react-icons/fa';
@@ -18,6 +18,7 @@ const SearchByLocation = ({backendUrl} ) => {
       auto_repair: '"Gas stations and car parking lots"',
       custom: "Custom Search..." 
   };
+
 
   // Function to get the Search Query
   const getSearchQuery = () => {
@@ -71,6 +72,18 @@ const SearchByLocation = ({backendUrl} ) => {
           console.error('No valid data available for CSV download');
       }
   };
+
+  // Functiion to update the title of the results 
+  const [resultsTitleQuery, setResultsTitleQuery] = useState('');
+  const [resultsTitleLocation, setResultsTitleLocation] = useState('');
+
+  useEffect(() => {
+    if (results) {
+      setResultsTitleQuery(getSearchQuery());
+      setResultsTitleLocation(location);
+    }
+  }, [results]);
+
   
     return ( 
       <div className="container mx-auto mt-6 p-4">
@@ -111,7 +124,7 @@ const SearchByLocation = ({backendUrl} ) => {
                     type="text"
                     value={customQuery}
                     onChange={(e) => setCustomQuery(e.target.value)}
-                    placeholder="Enter custom search query"
+                    placeholder='e.g. "Pizza Restaurants"'
                     className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-full text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal"
                   />
                 </div>
@@ -125,6 +138,9 @@ const SearchByLocation = ({backendUrl} ) => {
                       <FaInfoCircle className="text-gray-500 hover:text-gray-700 cursor-help"/>
                       <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-0 bottom-full mb-2 w-48">
                         Enter the location or region you want to search. Try entering your hometown or a nearby city.
+                        <br />
+                        <br />
+                        Best formatted as Town, State (e.g. "Chicago, IL").
                       </div>
                     </div>
               </div>
@@ -133,7 +149,7 @@ const SearchByLocation = ({backendUrl} ) => {
                   type="text"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  placeholder="Enter location"
+                  placeholder='Enter location'
                   className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-full text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal"
                 />
               </div>
@@ -165,7 +181,7 @@ const SearchByLocation = ({backendUrl} ) => {
         
         {results && (
           <div className="max-w-2xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-            <h2 className="text-xl font-bold text-charcoal">Results for {getSearchQuery()} "{location}":</h2>
+            <h2 className="text-xl font-bold text-charcoal">Results for {resultsTitleQuery} "{resultsTitleLocation}":</h2>
             <div className="text-xs mb-4">({results.num_results} businesses returned in {results.exc_time} seconds)</div>
             <pre className="bg-gray-100 p-4 h-[30vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto">
               {JSON.stringify(results, null, 2)}
