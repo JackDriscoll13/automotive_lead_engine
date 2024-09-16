@@ -10,14 +10,16 @@ const AnalyticsPage = ({backendUrl}) => {
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [results, setResults] = useState(null);
+    const [apiLimits, setApiLimits] = useState(null);
 
 
     // 
-    const TEXT_SEARCH_LIMIT = 1000; // Replace with your actual limit
-    const NEARBY_SEARCH_LIMIT = 3800; // Replace with your actual limit
-    const GEOCODE_LIMIT = 3800; 
+    const TEXT_SEARCH_LIMIT = 2000;
+    const NEARBY_SEARCH_LIMIT = 3800;
+    const GEOCODE_LIMIT = 3800;
 
     useEffect(() => {
+        // Fetching the main analytics data
         const fetchAnalytics = async () => {
             setIsLoading(true);
             setError(null);
@@ -50,7 +52,36 @@ const AnalyticsPage = ({backendUrl}) => {
             }
         };
 
+
+        // Fetching the api limits
+        const fetchApiLimits = async () => {
+            setIsLoading(true);
+            setError(null);
+            try {
+                const response = await fetch(`${backendUrl}/check_api_call_limits`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const data = await response.json();
+                console.log('API limits:', data);   
+                setApiLimits(data);
+            } catch (error) {
+                setError('Failed to fetch API limits. Please try again.');
+                console.error('There was a problem with the fetch operation:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
         fetchAnalytics();
+        fetchApiLimits();
     }, [backendUrl]); // Add any other dependencies if needed
 
 
@@ -213,9 +244,17 @@ const AnalyticsPage = ({backendUrl}) => {
                     <div className="h-[400px] w-full">
                         <Bar data={chartData} options={chartOptions} />
                     </div>
-                    <div className="flex justify-left mt-4 ml-10">
-                        <p className="text-xs text-black">Current Api Limits: Text Search (1000/day, 3800/month), Nearby Search (1000/day, 3800/month), Geocode (1000/day, 3800/month)</p>
+                    {apiLimits && (
+                    <div className="flex flex-col justify-left mt-6 ml-10">
+                        <p className="text-xs text-black mb-1">Current Api Limits:
+                            Text Search ({apiLimits.API_LIMITS.TEXT_SEARCH.DAILY}/day, {apiLimits.API_LIMITS.TEXT_SEARCH.MONTHLY}/month), 
+                            Nearby Search ({apiLimits.API_LIMITS.NEARBY_SEARCH.DAILY}/day, {apiLimits.API_LIMITS.NEARBY_SEARCH.MONTHLY}/month), 
+                            Geocode ({apiLimits.API_LIMITS.GEOCODE.DAILY}/day, {apiLimits.API_LIMITS.GEOCODE.MONTHLY}/month)</p>
+                        <p className="text-xs text-black">Note: The API limits are imposed internally by this application for the purpose of keeping this servive within the free tier of the Google Places API.
+                        Please let the team know if you want to increase or change these limits.
+                        </p>
                     </div>
+                    )}
                 </div>
             </>
             )}
