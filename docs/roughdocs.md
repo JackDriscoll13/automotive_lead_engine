@@ -49,9 +49,6 @@ If we max out our limits in a given month we:
 Total = 208$ per month which brings our cost to 8$ because of the free tier. 
   
 
-
-
-
 # ZIP Code Feature: 
 
 How it works: 

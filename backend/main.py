@@ -16,7 +16,7 @@ from dotenv import load_dotenv
 
 # Local Imports 
 from carwash_regional import get_all_car_washes
-from carwash_zipcode import generate_carwashes_by_zipcode2
+from carwash_zipcode import generate_carwashes_by_zipcode
 from check_api_call_limit import increment_app_search_counts
 from retrieve_analytics import retrieve_analytics_data
 from endpoint_schemas import SearchTextQueryRequest, SearchZipCodesRequest
@@ -74,7 +74,7 @@ async def search_carwashes(request: SearchZipCodesRequest):
     """Take a list of zip codes and return a robust list of car washes for each zip code."""
     increment_app_search_counts("zip_code_total")
     # This endpoint is basically a generator that returns a yield of data to the frontend through a streaming response
-    return StreamingResponse(generate_carwashes_by_zipcode2(GOOGLE_API_KEY, request.zip_codes, request.included_types, request.radius), media_type="text/event-stream")
+    return StreamingResponse(generate_carwashes_by_zipcode(GOOGLE_API_KEY, request.zip_codes, request.included_types, request.radius), media_type="text/event-stream")
 
 ################################################################################
 #### ANALYTICS ENDPOINT for Analytics Dashboard, and Utility Endpoint to check Current API Call Limits

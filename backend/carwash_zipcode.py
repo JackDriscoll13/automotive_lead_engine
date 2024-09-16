@@ -5,8 +5,9 @@ import json
 import requests
 #from utils import check_api_call_limit
 from check_api_call_limit import check_api_call_limit_new
+
 # Lets try to use a generator so we can stream some progress statements to the frontend
-def generate_carwashes_by_zipcode2(api_key: str, zip_codes: str | list[str], 
+def generate_carwashes_by_zipcode(api_key: str, zip_codes: str | list[str], 
                                    includedTypes: str | list[str],
                                    zipcode_radius: int = 5000):
     """
