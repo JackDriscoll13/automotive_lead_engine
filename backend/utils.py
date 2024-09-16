@@ -16,7 +16,9 @@ def increment_app_search_counts(search_label:str):
         json.dump(data, file)
 
 
-# Just in case the file is not there, we can initialize it with default values
+
+# Just in case the json data file for analytics is not there, we can initialize it with default values
+# Used in check_api_call_limit.py
 def initialize_search_counts_file(filename):
     """
     Initialize the search counts file with default values.

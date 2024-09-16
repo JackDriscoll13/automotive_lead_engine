@@ -1,4 +1,4 @@
-# GOOGLE API ENDPOINTS and Pricing
+# Google API ENDPOINTS and Pricing
  
 All API endpoints used in this application are from the (New) Google Places Api, details are here: 
 - [Places Documentation/Overview](https://developers.google.com/maps/documentation/places/web-service/op-overview): 
@@ -44,6 +44,8 @@ If we max out our limits in a given month we:
 3800 Geocodings = 19$
 
 Total = 208$ per month which brings our cost to 8$ because of the free tier. 
+
+
   
 # Text Search Feature
 
@@ -83,6 +85,9 @@ How it works:
 - Google nearby endpoint returns car washes within a specific radius of that lat and lng. 
   - The radius represents the area in/around that zip code. It should be adjusted based on population density of the zip codes you are looking up. 
   - For example a rural area might have zip codes that cover larger areas, urban areas will have smaller zip codes. 
+- We loop over each zip code, sequencially converting each one to coordnitates and pinging the nearby search api. 
+- As this endpoint runs, we yield results to the frontend via a generator through fastapi's [streaming response](https://fastapi.tiangolo.com/advanced/custom-response/#streamingresponse).
+
 - Note that, as of now, there is no pagnation in the nearby search feature, so *a maximum of 20 businesses can be returned per zip code*.
 
 Reasoning / Justification of Services: 
@@ -122,9 +127,40 @@ I keep track of our API calls and search count in a simple local json file. [sea
 
 - I use the [check_api_call_limit.py](../backend/check_api_call_limit.py) before sending each request to check if we have reached our limit and also to update the file. 
   - If we have reached our limit, the function returns early before updating the file and lets the application know that either a daily or monthly api limit has been reached. 
-- Everytime a user clicks a search button, the total search counts are incremented via the increment_app_search_count function, which lives in utils. 
+- Everytime a user clicks a search button, the total search counts are incremented via the increment_app_search_count function, which lives in [utils](../backend/utils.py) 
+
+- The analytics data is served to the frontend via the "/api_analytics" endpoint. 
+  - This data is then visualized in a frontend dashboard.
+  - The frontend also retreives information on our self imposed api limits discussed earlier.
+    - This information is defined in [api_limit_config.json](../backend/api_limit_config.json) and served to the frontend via the "/check_api_call_limits" endpoint. 
 
 # Deployment
+
+The app is containerized with docker and deployed using aws lightsail. Although lightsail isn't optimal in many cases, this app should be small enough to live on a micro lightsail instance. I really like lightsail for its consistent pricing.
+
+The frontend and backend are dockerized in seperate containers, and our development is continiously integreated into deployment via aws ECR. 
+
+Connecting the frontend and backend containers in docker:
+- Because the frontend and backend containers both live on the same LightSail instance (machine), I can connect them via a docker network. 
+  - This is pretty simple and just means I pass the name of the container followed by the port when pinging my backend from my frontend. 
+  - I just spin up each container on the same docker network network and change the url to my backend to the name of that container. 
+- I use a proxy to get around the fact that the browser doesn't let me ping an http endpoint:     
+    - In [default.conf](../frontend/default.conf)
+    - location /api/ {
+            proxy_pass http://backend:8000/;
+        }
+
+The app is deployed on the qfresheners.com domain and uses SSL certificates for https.
+
+The lightsail instance is set up to auto renew certificates with a recurring cron job. 
+
+
+Deployment Commands: 
+Backend: 
+docker run -d --name backend --network web -p 8000:8000 -e GOOGLE_MAPS_API_KEY=your_api_key_here image_name
+
+Frontend: 
+docker run -d   --name frontend  -p 80:80   -p 443:443   -v certbot-etc:/etc/letsencrypt  --network web image_name
 
 
 
