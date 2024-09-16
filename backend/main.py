@@ -19,17 +19,7 @@ from carwash_regional import get_all_car_washes
 from carwash_zipcode import generate_carwashes_by_zipcode2
 from check_api_call_limit import increment_app_search_counts
 from retrieve_analytics import retrieve_analytics_data
-
-
-#  Just defining my models here for simplicity
-class SearchCarwashesRequest(BaseModel):
-    region: str
-
-class SearchZipCodesRequest(BaseModel):
-    zip_codes: str | list[str]
-    included_types: str | list[str]
-    radius: int = 5000
-
+from endpoint_schemas import SearchTextQueryRequest, SearchZipCodesRequest
 
 ################################################################################
 #### SETUP ####
@@ -63,7 +53,7 @@ if not GOOGLE_API_KEY:
 #### MAIN TWO ENDPOINTS ####
 ################################################################################
 @app.post("/search_carwashes_regions")
-def search_carwashes(request: SearchCarwashesRequest):
+def search_carwashes(request: SearchTextQueryRequest):
     """Get a list of car washes in a region"""
     start_time = time.time()
     # Increment the regional total
