@@ -144,9 +144,9 @@ const AnalyticsPage = ({backendUrl}) => {
             {
                 label: '% Monthly API Limit',
                 data: [
-                    getPercentage((results?.text_search_calls?.monthly_count_not_today || 0) + (results?.text_search_calls?.daily_count || 0), TEXT_SEARCH_LIMIT),
-                    getPercentage((results?.nearby_search_calls?.monthly_count_not_today || 0) + (results?.nearby_search_calls?.daily_count || 0), NEARBY_SEARCH_LIMIT),
-                    getPercentage((results?.geocode_calls?.monthly_count_not_today || 0) + (results?.geocode_calls?.daily_count || 0), GEOCODE_LIMIT)
+                    getPercentage((results?.text_search_calls?.monthly_count_not_today || 0) + (results?.text_search_calls?.daily_count || 0), apiLimits?.API_LIMITS?.TEXT_SEARCH?.MONTHLY),
+                    getPercentage((results?.nearby_search_calls?.monthly_count_not_today || 0) + (results?.nearby_search_calls?.daily_count || 0), apiLimits?.API_LIMITS?.NEARBY_SEARCH?.MONTHLY),
+                    getPercentage((results?.geocode_calls?.monthly_count_not_today || 0) + (results?.geocode_calls?.daily_count || 0), apiLimits?.API_LIMITS?.GEOCODE?.MONTHLY)
                 ],
                 backgroundColor: 'rgba(255, 223, 128, 0.6)',
                 borderColor: 'rgba(255, 223, 128, 1)',
@@ -219,7 +219,7 @@ const AnalyticsPage = ({backendUrl}) => {
 
     return (
         <div>
-            {results && (
+            {results && apiLimits && (
             <>
                 <div className="bg-white shadow-lg rounded-lg p-6 mb-8">
                     <h2 className="text-2xl font-semibold mb-6 text-gray-700">Searches All Time</h2>
