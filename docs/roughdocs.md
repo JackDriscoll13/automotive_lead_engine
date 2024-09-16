@@ -1,7 +1,6 @@
 
 
 
-### Backend Notes 
 
 
 # GOOGLE API ENDPOINTS
@@ -11,10 +10,9 @@ All API endpoints used in this application are from the (New) Google Places Api,
 - [Pricing](https://mapsplatform.google.com/pricing/): 
 
 
+Pricing: 
 An important price detail to remember: 
   "For Place Details (New), Nearby Search (New), and Text Search (New), use the FieldMask header in API requests to specify the list of fields to return in the response. You are then billed at the highest SKU applicable to your request. That means if you select fields in both the (Basic) SKU and the (Advanced) SKU, you are billed based on the (Advanced) SKU."
-
-In both of my text and nearby sea
 
 - Text Search Api (Advanced): 
   - Price: 35$ per 1000 Api Calls
@@ -43,13 +41,33 @@ The thinking here is:
 3. The geocoding api is inherently related to the nearby search (everytime the application cals the geocoding api it also calls the nearby search api), so there is no need to limit the geocoding api. 
 
 If we max out our limits in a given month we: 
+
 1600 Text Searches = 56$
+
 3800 Nearby Searches = 133$
+
 3800 Geocodings = 19$
+
 Total = 208$ per month which brings our cost to 8$ because of the free tier. 
   
+# Text Search Feature
+
+Main Endpoints this feature uses: 
+
+
 
 # ZIP Code Feature: 
+
+Main Endpoints this feature uses: 
+Nearby Search: 
+https://developers.google.com/maps/documentation/places/web-service/nearby-search
+(Places API NEW)
+
+Geocoding API: 
+I'm using the [googlemaps](https://pypi.org/project/googlemaps/) to ping the geocoding api. 
+The library converts the zipcode to lat and lng with this call to the api: 
+`return client._request("/maps/api/geocode/json", params).get("results", [])`
+
 
 How it works: 
 - User enters a zip code or a list of zip codes. 
@@ -59,20 +77,16 @@ How it works:
   - The radius represents the area in/around that zip code. It should be adjusted based on population density of the zip codes you are looking up. 
   - For example a rural area might have zip codes that cover larger areas, urban areas will have smaller zip codes. 
 
-
 Reasoning / Justification of Services: 
 **Converting zip codes to lat lng: **
   - I had a few differnt options here, I mainly considered: 
     - Using Geopy with Nominatim geocoder, which is based on OpenStreetMap data. This is an api call that's free.
     - Using Uszipcode library, which essentially is a local database of zip codes and fields attached to them. 
   - Ultimatley, I chose to use the google geocoding API because I was already using a google api as the cornerstone 
-  - of this project. Plus its reliable and should be free/extremely low cost. 
+  - of this project. Plus its reliable and should be extremely low cost. 
 
-
-Request Details and Field Mask: 
-
-Location Restriction: 
-
+Field Mask: 
+Reference the [carwash_zipcode.py](../backend/carwash_zipcode.py) file to examine and change our current field mask. 
 
 Included Types:
     Included types lets you specify a list of types from [here](https://developers.google.com/maps/documentation/places/web-service/place-types#table-a) to filter the search results.
@@ -86,6 +100,16 @@ Included Types:
         gas_station
         parking
         rest_stop
+
+I've decided to let users choose what types to include in the zipcode feature. We are letting them include:
+  [car_wash, car_rental, gas_station, car_dealer, car_repair, parking] 
+
+Future Work on this Feature:
+The main think that might be useful to implement with this feature is some way of automatically retrieving the size or population density of the zip codes we are searching. If we could programaitcally select the search readius (rather than enter it manually as we are currently, that would be ideal.)
+
+
+# Analytics Page Feature 
+
 
 # Deployment  
 
