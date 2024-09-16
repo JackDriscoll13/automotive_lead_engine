@@ -19,9 +19,10 @@ const SearchByLocation = ({backendUrl} ) => {
       custom: "Custom Search..." 
   };
 
+  // Function to get the Search Query
   const getSearchQuery = () => {
       if (selectedQuery === 'custom') {
-          return customQuery;
+        return `"${customQuery}" in`;
       }
       return `${queryOptions[selectedQuery].toLowerCase()} in`;
   };

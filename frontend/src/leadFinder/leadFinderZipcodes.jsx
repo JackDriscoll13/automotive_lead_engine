@@ -186,8 +186,8 @@ const SearchByZipcodes = ({ backendUrl }) => {
                 <div className="flex flex-col items-center pb-4 shadow-md">
                     <div className="w-full mb-4 flex flex-col items-center">
                     <div className="flex">
-                        <label htmlFor="zipCodes" className="block text-md font-semibold text-gray-700 mb-2 text-center">
-                            Enter zip codes:
+                        <label htmlFor="zipCodes" className="block text-sm font-semibold mb-1 text-gray-700 text-left">
+                            Enter Zip Codes:
                         </label>
                         <div className="relative group ml-1">
                                 <FaInfoCircle className="text-gray-500 hover:text-gray-700 cursor-help"/>
