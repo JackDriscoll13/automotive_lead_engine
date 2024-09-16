@@ -3,28 +3,28 @@ import { downloadCSV } from './leadFinderUtils';
 
 const SearchByLocation = ({backendUrl} ) => {
     const [location, setLocation] = useState('');
+    const [searchQuery, setSearchQuery] = useState('search car washes and car detailers in');
     const [results, setResults] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [resultsLabel, setResultsLabel] = useState(null);
-  
+
     const handleSubmit = async (e) => {
       e.preventDefault();
       setIsLoading(true);
       setResults(null);
       setError(null);
       setResultsLabel(null);
-  
-  
+
       try {
         const response = await fetch(`${backendUrl}/search_carwashes_regions`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({region: location}),
+          body: JSON.stringify({region: location, query: searchQuery}),
         });
-  
+
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -57,24 +57,49 @@ const SearchByLocation = ({backendUrl} ) => {
   };
   
     return ( 
-        <div className="container mx-auto mt-6 p-4">
-          <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-12">
-            <div className="flex items-center border-b-2 border-charcoal py-2 shadow-md">
-              <input
-                type="text"
-                value={location}
-                onChange={(e) => setLocation(e.target.value)}
-                placeholder="Enter location"
-                className="appearance-none bg-transparent border-none w-full text-gray-700 mr-3 py-1 px-2 leading-tight focus:outline-none"
-              />
-              <button
-                type="submit"
-                className="flex-shrink-0 bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700 text-sm border-4 text-white py-1 px-2 rounded"
-              >
-                Search Car Washes
-              </button>
-            </div>
-          </form>
+      <div className="container mx-auto mt-6 p-4">
+      <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-12">
+        <div className="flex flex-col items-center pb-4 shadow-md">
+          <div className="w-full mb-4">
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+              placeholder="Enter location"
+              className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-full text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal"
+            />
+          </div>
+          <div className="w-full mb-4">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Enter search query"
+              className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-full text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal"
+            />
+          </div>
+          <div className="flex justify-center mt-6">
+            <button
+              type="submit"
+              disabled={isLoading}
+              className={`w-60 flex-shrink-0 text-xl border-4 text-white py-1 px-2 rounded flex items-center justify-center ${
+                isLoading
+                  ? 'bg-gray-500 border-gray-500 cursor-not-allowed'
+                  : 'bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700'
+              }`}
+            >
+              {isLoading ? (
+                <>
+                  <LoadingSpinner className="w-5 h-5 mr-2" />
+                  Searching...
+                </>
+              ) : (
+                'Search'
+              )}
+            </button>
+          </div>
+        </div>
+      </form>
           {isLoading && <p className="text-center">Loading...</p>}
           {error && <p className="text-center text-red-500">{error}</p>}
         
