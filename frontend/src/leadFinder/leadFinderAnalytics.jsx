@@ -226,11 +226,11 @@ const AnalyticsPage = ({backendUrl}) => {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <div className="bg-gray-100 rounded-lg p-6 transition-all duration-300 hover:shadow-md flex flex-col items-center justify-center">
                             <h3 className="text-lg font-medium text-gray-600 mb-2 text-center">General Location Searches</h3>
-                            <p className="text-4xl font-bold text-blue-900">{results.app_search_counts.regional_total || 0}</p>
+                            <p className="text-4xl font-bold text-blue-900">{(results.app_search_counts.regional_total || 0).toLocaleString()}</p>
                         </div>
                         <div className="bg-gray-100 rounded-lg p-6 transition-all duration-300 hover:shadow-md flex flex-col items-center justify-center">
                             <h3 className="text-lg font-medium text-gray-600 mb-2 text-center">Zip Code Searches</h3>
-                            <p className="text-4xl font-bold text-blue-900">{results.app_search_counts.zip_code_total || 0}</p>
+                            <p className="text-4xl font-bold text-blue-900">{(results.app_search_counts.zip_code_total || 0).toLocaleString()}</p>
                         </div>
                     </div>
                 </div>
