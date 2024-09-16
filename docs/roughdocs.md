@@ -93,10 +93,5 @@ Included Types:
 # Deployment  
 
 
-### Deployment Commands 
-Backend: 
- docker run -d --name backend --network web -p 8000:8000 -e GOOGLE_MAPS_API_KEY=AIzaSyD8ztW4LX_5HD9Tg19Q13NXWmvGnP77UtE jackdriscoll13/carwash:backend-latest
 
-Frontend: 
-docker run -d   --name frontend  -p 80:80   -p 443:443   -v certbot-etc:/etc/letsencrypt  --network web 1fbde20c67fa
 

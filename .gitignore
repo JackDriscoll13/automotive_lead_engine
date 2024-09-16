@@ -6,3 +6,6 @@ googlemaps_api_notes.txt
 docker-compose.yml
 googlemaps_api_notes.md
 __pycache__/
+
+# Sensitive Documentation 
+docs/Deployment Commands.md
