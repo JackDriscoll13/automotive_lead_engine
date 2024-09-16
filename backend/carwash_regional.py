@@ -4,7 +4,7 @@ import json
 #from utils import check_api_call_limit
 from check_api_call_limit import  check_api_call_limit_new
 
-def get_all_car_washes(api_key, region):
+def get_all_car_washes(api_key, region, query):
     """
     Fetch car washes in a region using Google Places API.
     Makes multiple API calls to get car wash and detailing businesses,
@@ -24,6 +24,8 @@ def get_all_car_washes(api_key, region):
         - Searches for "car wash and car detailing" businesses.
     """
 
+
+
     # Read in the api_limit_config.json file
     with open('api_limit_config.json', 'r') as file:
         api_limits = json.load(file)
@@ -39,8 +41,15 @@ def get_all_car_washes(api_key, region):
     }
     
     # Define the text query, which is hard coded for now.
+    # Strip quotation marks from the query parameter
+    print('query: ', query)
+    query = query.replace('"', '')
+    print('query: ', query)
+    text_query = f"{query} {region}"
+    print('text_query: ', text_query)
+
     data = {
-        "textQuery": f"car wash and car detailing {region}",
+        "textQuery": text_query,
         "languageCode": "en"
     }
     

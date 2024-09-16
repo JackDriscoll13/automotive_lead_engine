@@ -59,7 +59,7 @@ def search_carwashes(request: SearchTextQueryRequest):
     # Increment the regional total
     increment_app_search_counts("regional_total")
     # Call the primary function
-    car_washes_result = get_all_car_washes(GOOGLE_API_KEY, request.region)
+    car_washes_result = get_all_car_washes(GOOGLE_API_KEY, request.region, request.query)
     if "error" in car_washes_result:
         # Return or handle the error message as needed for the frontend
         return car_washes_result

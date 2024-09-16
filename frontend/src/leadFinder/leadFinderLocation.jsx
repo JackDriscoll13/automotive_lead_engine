@@ -1,13 +1,31 @@
 import React, {useState, } from 'react'
 import { downloadCSV } from './leadFinderUtils';
+import { LoadingSpinner } from './leadFinderUtils';
+import { FaInfoCircle } from 'react-icons/fa';
 
 const SearchByLocation = ({backendUrl} ) => {
     const [location, setLocation] = useState('');
-    const [searchQuery, setSearchQuery] = useState('search car washes and car detailers in');
+    const [selectedQuery, setSelectedQuery] = useState('car_washes_detailers');
+    const [customQuery, setCustomQuery] = useState('');
     const [results, setResults] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [resultsLabel, setResultsLabel] = useState(null);
+
+
+    const queryOptions = {
+      car_washes_detailers: '"Car washes and car detailers"',
+      car_dealers: '"Car washes"',
+      auto_repair: '"Gas stations and car parking lots"',
+      custom: "Custom Search..." 
+  };
+
+  const getSearchQuery = () => {
+      if (selectedQuery === 'custom') {
+          return customQuery;
+      }
+      return `${queryOptions[selectedQuery].toLowerCase()} in`;
+  };
 
     const handleSubmit = async (e) => {
       e.preventDefault();
@@ -22,9 +40,9 @@ const SearchByLocation = ({backendUrl} ) => {
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({region: location, query: searchQuery}),
+          body: JSON.stringify({region: location, query: getSearchQuery()}),
         });
-
+  
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -58,49 +76,93 @@ const SearchByLocation = ({backendUrl} ) => {
   
     return ( 
       <div className="container mx-auto mt-6 p-4">
-      <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-12">
-        <div className="flex flex-col items-center pb-4 shadow-md">
-          <div className="w-full mb-4">
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
-              placeholder="Enter location"
-              className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-full text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal"
-            />
-          </div>
-          <div className="w-full mb-4">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Enter search query"
-              className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-full text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal"
-            />
-          </div>
-          <div className="flex justify-center mt-6">
-            <button
-              type="submit"
-              disabled={isLoading}
-              className={`w-60 flex-shrink-0 text-xl border-4 text-white py-1 px-2 rounded flex items-center justify-center ${
-                isLoading
-                  ? 'bg-gray-500 border-gray-500 cursor-not-allowed'
-                  : 'bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700'
-              }`}
-            >
-              {isLoading ? (
-                <>
-                  <LoadingSpinner className="w-5 h-5 mr-2" />
-                  Searching...
-                </>
-              ) : (
-                'Search'
+        <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-12">
+          {/* Search For */}
+          <div className="flex flex-col items-center pb-4 shadow-md">
+            <div className="flex flex-col items-left w-3/4">
+            <div className="flex justify-between">
+                  <label className="block text-sm font-semibold text-gray-700 ml-1 text-left">
+                      Search For:
+                    </label>
+                    <div className="relative group ml-1">
+                      <FaInfoCircle className="text-gray-500 hover:text-gray-700 cursor-help"/>
+                      <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-0 bottom-full mb-2 w-48">
+                        Enter your search query. This tool is optimized for car washes, detailers, and other car-related businesses, but you can search for any business type.
+                      </div>
+                    </div>
+              </div>
+              <div className="w-full mb-2 relative">
+              <select
+                value={selectedQuery}
+                onChange={(e) => setSelectedQuery(e.target.value)}
+                className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-full text-gray-700 py-2 px-3 pr-8 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal"
+              >
+                {Object.entries(queryOptions).map(([value, label]) => (
+                  <option key={value} value={value}>{label}</option>
+                ))}
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/>
+                </svg>
+              </div>
+            </div>
+              {selectedQuery === 'custom' && (
+                <div className="w-full mb-2 text-gray-700">
+                  <input
+                    type="text"
+                    value={customQuery}
+                    onChange={(e) => setCustomQuery(e.target.value)}
+                    placeholder="Enter custom search query"
+                    className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-full text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal"
+                  />
+                </div>
               )}
-            </button>
-          </div>
-        </div>
-      </form>
-          {isLoading && <p className="text-center">Loading...</p>}
+              {/* Location/Region */}
+              <div className="flex justify-between mt-6">
+                  <label className="block text-sm font-semibold text-gray-700 ml-1 text-left">
+                      In Location/Region:
+                    </label>
+                    <div className="relative group ml-1">
+                      <FaInfoCircle className="text-gray-500 hover:text-gray-700 cursor-help"/>
+                      <div className="absolute hidden group-hover:block bg-gray-800 text-white text-xs rounded py-1 px-2 right-0 bottom-full mb-2 w-48">
+                        Enter the location or region you want to search. Try entering your hometown or a nearby city.
+                      </div>
+                    </div>
+              </div>
+              <div className="w-full mb-2">
+                <input
+                  type="text"
+                  value={location}
+                  onChange={(e) => setLocation(e.target.value)}
+                  placeholder="Enter location"
+                  className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-full text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal"
+                />
+              </div>
+              <div className="flex justify-center mt-6">
+                <button
+                  type="submit"
+                  disabled={isLoading}
+                  className={`w-60 flex-shrink-0 text-xl border-4 text-white py-1 px-2 rounded flex items-center justify-center ${
+                    isLoading
+                      ? 'bg-gray-500 border-gray-500 cursor-not-allowed'
+                      : 'bg-charcoal hover:bg-gray-700 border-charcoal hover:border-gray-700'
+                  }`}
+                >
+                  {isLoading ? (
+                    <>
+                      <LoadingSpinner className="w-5 h-5 mr-2" />
+                      Searching...
+                    </>
+                  ) : (
+                    'Search'
+                  )}
+                </button>
+              </div>
+              </div>
+            </div>
+          </form>
+          {isLoading && <p className="text-center text-gray-700">Searching for {getSearchQuery()} {location}...</p>}
           {error && <p className="text-center text-red-500">{error}</p>}
         
         {results && (
