@@ -11,7 +11,7 @@ def generate_carwashes_by_zipcode(api_key: str, zip_codes: str | list[str],
                                    includedTypes: str | list[str],
                                    zipcode_radius: int = 5000):
     """
-    Fetch car washes for one or more zip codes using Google Places API Nearby Search.
+    Fetch automotive businesses for one or more zip codes using Google Places API Nearby Search.
     Includes deduplication based on place_id and streams updates.
 
     Args:
@@ -55,7 +55,7 @@ def generate_carwashes_by_zipcode(api_key: str, zip_codes: str | list[str],
 
     # Iterate over each zip code
     for zip_code in zip_codes_list:
-        yield json.dumps({"type": "progress", "message": f"Getting coordinates for car washes in {zip_code}"}) + "\n"
+        yield json.dumps({"type": "progress", "message": f"Getting central coordinates for {zip_code}"}) + "\n"
         try:
             # Geocode the zip code to get the latitude and longitude
             success, message, counts = check_api_call_limit_new("geocode_calls", daily_limit=api_limits["GEOCODE"]["DAILY"], monthly_limit=api_limits["GEOCODE"]["DAILY"])
@@ -73,7 +73,7 @@ def generate_carwashes_by_zipcode(api_key: str, zip_codes: str | list[str],
 
         # Once we have the coordinates, search for car washes in area (within the specified radius) of that zip code
         yield json.dumps({"type": "progress", "message": f"Coordinates for {zip_code} are: {location}"}) + "\n"
-        yield json.dumps({"type": "progress", "message": f"Searching for car washes within {zipcode_radius}m radius of {zip_code}"}) + "\n"
+        yield json.dumps({"type": "progress", "message": f"Searching for businesses within {zipcode_radius}m radius of {zip_code}"}) + "\n"
 
         # We set up the params for the Google Places API Nearby Search
         headers = {
@@ -124,7 +124,7 @@ def generate_carwashes_by_zipcode(api_key: str, zip_codes: str | list[str],
                 break
             if len(results['places']) > 19:
                 yield json.dumps({"type": "warning", 
-                                  "message": f"Found {len(results['places'])} (MAX!) results in {zip_code}. This probably means the radius is too large and you did not capture all car washes within this zip code. You might want to try a smaller radius."}) + "\n"
+                                  "message": f"Found {len(results['places'])} (MAX!) results in {zip_code}. This probably means the radius is too large and you did not capture all businesses of interest within this zip code. You might want to try a smaller radius."}) + "\n"
 
             
             # Iterate over the results and add them to the all_car_washes dictionary
@@ -156,7 +156,7 @@ def generate_carwashes_by_zipcode(api_key: str, zip_codes: str | list[str],
             break
             
         # Want to keep track of how many car washes we've found for the given zip code
-        yield json.dumps({"type": "progress", "message": f"Completed search for {zip_code}; {num_car_washes_found} car washes found"}) + "\n"
+        yield json.dumps({"type": "progress", "message": f"Completed search for {zip_code}; {num_car_washes_found} automotive businesses found"}) + "\n"
 
     final_results = list(all_car_washes.values())
     yield json.dumps({
