@@ -7,7 +7,7 @@ The primary purpose of this application is to generate leads for a company that 
 
 The intended user base is extremley small (2-4 people.)
 
-The application is publicly deployed for ease of use and because there is limited potnetial for abuse.
+The application is publicly deployed for ease of use and because there is limited potential for abuse.
 
 **Tech Stack:** 
 The frontend is React JS, Tailwind CSS, and Chart JS (react-chart-js2) for the Analytics Chart. 
