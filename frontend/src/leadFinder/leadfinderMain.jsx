@@ -12,8 +12,8 @@ import AnalyticsPage from './leadFinderAnalytics';
 const Header = () => {
   return (
     <header className="bg-charcoal text-white p-4 shadow-md">
-      <div className="flex container mx-auto justify-between">
-        <h1 className="text-2xl font-semibold">Car Wash Lead Generator</h1>
+      <div className="flex container justify-between items-center mx-auto">
+        <h1 className="text-xl font-semibold">Lead Generator&nbsp;&nbsp;&mdash;&nbsp;&nbsp;Automotive Businesses</h1>
         <a href="/home" className="text-xl font-semibold hover:underline">
           Qfresheners.com
         </a>
