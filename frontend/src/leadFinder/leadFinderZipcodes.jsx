@@ -149,7 +149,6 @@ const SearchByZipcodes = ({ backendUrl }) => {
                 buffer = buffer.slice(newlineIndex + 1);
     
                 if (line.trim() !== '') {
-                    log('Processing line:', line);
                     try {
                         const data = JSON.parse(line);
                         if (data.type === 'progress') {

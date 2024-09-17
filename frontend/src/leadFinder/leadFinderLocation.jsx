@@ -46,6 +46,11 @@ const SearchByLocation = ({backendUrl} ) => {
     return true;
   };
 
+  // Reset the input error when the query, custom query, or location changes
+  useEffect(() => {
+    setInputError(null);
+  }, [selectedQuery, customQuery, location]);
+
   // Function to handle the form submission
   const handleSubmit = async (e) => {
     e.preventDefault();

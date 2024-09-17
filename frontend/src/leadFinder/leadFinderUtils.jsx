@@ -8,9 +8,7 @@ export const LoadingSpinner = () => {
     );
 };
 
-// Dowload CSV
-// Dowload CSV
-// Refactor these to a utils file
+// Download CSV
 export const convertToCSV = (data) => {
     if (!data || !data.length) return '';
 
