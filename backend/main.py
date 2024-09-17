@@ -17,7 +17,7 @@ from dotenv import load_dotenv
 # Local Imports 
 from carwash_regional import get_all_car_washes
 from carwash_zipcode import generate_carwashes_by_zipcode
-from check_api_call_limit import increment_app_search_counts
+from utils import increment_app_search_counts
 from retrieve_analytics import retrieve_analytics_data
 from endpoint_schemas import SearchTextQueryRequest, SearchZipCodesRequest
 

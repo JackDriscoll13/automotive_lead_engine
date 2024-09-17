@@ -104,15 +104,12 @@ const SearchByZipcodes = ({ backendUrl }) => {
             .split(',')
             .filter(zip => zip.length === 5 && /^\d{5}$/.test(zip));
             
-        
+        // Filter the selected types
         const selectedTypesList = Object.entries(selectedTypes)
             .filter(([_, isSelected]) => isSelected)
             .map(([type, _]) => type);
     
-        console.log('Sending the following data to the backend:');
-        console.log('cleanedZipCodes:', cleanedZipCodes);
-        console.log('radius:', radius);
-        console.log('selectedTypesList:', selectedTypesList);
+        // Send the inputs as data to the backend
         const response = await fetch(`${backendUrl}/search_carwashes_zipcodes`, {
             method: 'POST',
             headers: {
@@ -124,9 +121,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
                 radius: radius,
             }),
         });
-    
-        log('Response received:', response);
-    
+
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
     
@@ -140,7 +135,6 @@ const SearchByZipcodes = ({ backendUrl }) => {
             }
     
             const decodedChunk = decoder.decode(value, { stream: true });
-            log('Received chunk:', decodedChunk);
             buffer += decodedChunk;
     
             let newlineIndex;
