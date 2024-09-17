@@ -1,6 +1,7 @@
 # Overview
 
 **Summary:**
+
 This is the codebase for [qfresheners.com/leads](https://www.qfresheners.com/leads).
 
 The primary purpose of this application is to generate leads for a company that sells ancillary items to automotive businesses. The app allows sales people to quickly explore locations and generate long sheets of leads that can be used to contact businesses or fed into CRM tools.
@@ -10,11 +11,13 @@ The intended user base is extremley small (2-4 people.)
 The application is publicly deployed for ease of use and because there is limited potential for abuse.
 
 **Tech Stack:** 
+
 The frontend is React JS, Tailwind CSS, and Chart JS (react-chart-js2) for the Analytics Chart. 
 
 The backend is built in python with FastApi. 
 
-Core Concepts: 
+**Core Concepts:** 
+
 This applicaiton uses 3 endpoints from the new Google Places API to collect information on businesses through different means. 
 
 The Location Search Feature uses the [text search](https://developers.google.com/maps/documentation/places/web-service/text-search) endpoint to find businesses given a text query and a location. This feature is built in a minimal way and is basically a glorified wrapper on the text search endpoint. 
