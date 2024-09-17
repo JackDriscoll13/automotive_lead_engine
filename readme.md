@@ -14,7 +14,7 @@ The frontend is React JS, Tailwind CSS, and Chart JS (react-chart-js2) for the A
 
 The backend is built in python with FastApi. 
 
-Core Concepts: 
+**Core App:**
 This applicaiton uses 3 endpoints from the new Google Places API to collect information on businesses through different means. 
 
 The Location Search Feature uses the [text search](https://developers.google.com/maps/documentation/places/web-service/text-search) endpoint to find businesses given a text query and a location. This feature is built in a minimal way and is basically a glorified wrapper on the text search endpoint. 
@@ -23,4 +23,4 @@ The Zip Code Search feature combines google's [geocoding api](https://developers
 
 I reccomend playing with the application to get a feel for how it works before diving into the code. The analytics page is helpful for understanding how many api calls you are making with each search. 
 
-Or if you're a psycopath you can read the docs I wrote. They can be found in [docs/docs.md](docs/docs.md)
+Or if you're a psycopath you can read the docs I wrote for my future self. They can be found in [docs/docs.md](docs/docs.md)
