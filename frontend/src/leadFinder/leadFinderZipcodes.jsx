@@ -219,8 +219,7 @@ const SearchByZipcodes = ({ backendUrl }) => {
                                 Click on the business types to include in your search. At least one type must be selected. 
                                 <br/>
                                 <br/>
-                                Read more about the business types here: https://developers.google.com/maps/documentation/places/web-service/place-types?hl=en#table-a
-                                
+                                Read more abut the business types in the Zip Code Search section of the documentation.
                             </div>
                         </div>
                     </div>
