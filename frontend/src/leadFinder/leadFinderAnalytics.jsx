@@ -6,17 +6,12 @@ import annotationPlugin from 'chartjs-plugin-annotation';
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, annotationPlugin);
 
 const AnalyticsPage = ({backendUrl}) => {
-    // Component state 
+    // Component states
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [results, setResults] = useState(null);
     const [apiLimits, setApiLimits] = useState(null);
 
-
-    // 
-    const TEXT_SEARCH_LIMIT = 2000;
-    const NEARBY_SEARCH_LIMIT = 3800;
-    const GEOCODE_LIMIT = 3800;
 
     useEffect(() => {
         // Fetching the main analytics data
@@ -85,26 +80,25 @@ const AnalyticsPage = ({backendUrl}) => {
     }, [backendUrl]); // Add any other dependencies if needed
 
 
-
+    // Helper functions for labels
     const getCurrentMonth = () => {
         const now = new Date();
         return now.toLocaleString('default', { month: 'long', year: 'numeric' });
       };
-
     const getCurrentMonthAbv = () => {
         const now = new Date();
         return now.toLocaleString('default', { month: 'short', year: 'numeric' });
     }
-    
     const currentmonth = getCurrentMonth()
     const currentmonthabv = getCurrentMonthAbv()
-    //
+    
+    // Doing math for the chart
     const getPercentage = (value, limit) => Math.round((value / limit) * 10000) / 100;
 
-    // Function to round up to the nearest 100
+    // Function to round up to the nearest 100 (for the y-axis max)
     const roundUpToNearest100 = (num) => Math.ceil(num / 100) * 100;
 
-    // Calculate the maximum value for the y-axis
+    // Calculate the maximum value for the y-axis (for the y-axis max)
     const calculateYAxisMax = () => {
         const maxValue = Math.max(
             (results?.text_search_calls?.monthly_count_not_today || 0) + (results?.text_search_calls?.daily_count || 0),
@@ -114,6 +108,7 @@ const AnalyticsPage = ({backendUrl}) => {
         return roundUpToNearest100(maxValue + 100);
     };
 
+    // Setting up the chart data
     const chartData = {
         labels: ['Text Search Calls', 'Nearby Search Calls', 'Geocode Calls'],
         datasets: [
@@ -155,7 +150,8 @@ const AnalyticsPage = ({backendUrl}) => {
             }
         ],
     };
-    
+
+    // Setting up the chart options
     const chartOptions = {
         responsive: true,
         maintainAspectRatio: false,
