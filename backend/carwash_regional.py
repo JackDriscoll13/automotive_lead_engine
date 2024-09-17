@@ -1,20 +1,51 @@
 import requests
 import time
-from utils import check_api_call_limit
+import json
+#from utils import check_api_call_limit
+from check_api_call_limit import  check_api_call_limit_new
 
-def get_all_car_washes(api_key, region):
-    """ Primary function to ping the google places API and get all car washes in a region """
+def get_all_car_washes(api_key, region, query):
+    """
+    Fetch car washes in a region using Google Places API.
+    Makes multiple API calls to get car wash and detailing businesses,
+    handling pagination and API usage limits.
+
+    Args:
+        api_key (str): Google Maps API key.
+        region (str): Search region.
+
+    Returns:
+        list: Car wash info (name, address, rating, etc.) if successful.
+        dict: Error details if API limit exceeded.
+
+    Notes:
+        - Uses check_api_call_limit to stay within API limits.
+        - Maximum 3 API calls per invocation.
+        - Searches for "car wash and car detailing" businesses.
+    """
+
+
+
+    # Read in the api_limit_config.json file
+    with open('api_limit_config.json', 'r') as file:
+        api_limits = json.load(file)
+        api_limits = api_limits["API_LIMITS"]
 
     base_url = "https://places.googleapis.com/v1/places:searchText"
     
+    # These headers: we pass the api key, we pass the field mask
     headers = {
         "Content-Type": "application/json",
         "X-Goog-Api-Key": api_key,
         "X-Goog-FieldMask": "places.displayName,places.formattedAddress,places.rating,places.location,places.id,places.nationalPhoneNumber,places.websiteUri,nextPageToken"
     }
     
+    # Strip quotation marks from the query parameter
+    query = query.replace('"', '')
+    text_query = f"{query} {region}"
+
     data = {
-        "textQuery": f"car wash and car detailing {region}",
+        "textQuery": text_query,
         "languageCode": "en"
     }
     
@@ -24,17 +55,17 @@ def get_all_car_washes(api_key, region):
 
     while True:
         # Check API call limit before making the next request
-        success, message, counts = check_api_call_limit("google_maps_api_key", daily_limit=10, monthly_limit=5800)
+        success, message, counts = check_api_call_limit_new("text_search_calls", daily_limit=api_limits["TEXT_SEARCH"]["DAILY"], monthly_limit=api_limits["TEXT_SEARCH"]["MONTHLY"])
         if not success:
             return {"error": f"Limit exceeded: {message}. Total calls: {counts['total_calls']}, Monthly calls: {counts['monthly_calls']}, Daily calls: {counts['daily_calls']}."}
 
-
+        # If there is a next page token, add it to the data
         if next_page_token:
             data["pageToken"] = next_page_token
         
+        # Make the API call
         response = requests.post(base_url, json=data, headers=headers)
         results = response.json()
-        print(results)
         places = results.get("places", [])
         for place in places:
             car_wash = {

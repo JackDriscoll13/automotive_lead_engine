@@ -1,0 +1,16 @@
+{
+    "API_LIMITS": {
+      "TEXT_SEARCH": {
+        "DAILY": 600,
+        "MONTHLY": 1600
+      },
+      "NEARBY_SEARCH": {
+        "DAILY": 800,
+        "MONTHLY": 3800
+      },
+      "GEOCODE": {
+        "DAILY": 800,
+        "MONTHLY": 3800
+      }
+    }
+  }
