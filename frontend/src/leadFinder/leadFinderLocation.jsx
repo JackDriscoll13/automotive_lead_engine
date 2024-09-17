@@ -4,23 +4,26 @@ import { LoadingSpinner } from './leadFinderUtils';
 import { FaInfoCircle } from 'react-icons/fa';
 
 const SearchByLocation = ({backendUrl} ) => {
-    const [location, setLocation] = useState('');
-    const [selectedQuery, setSelectedQuery] = useState('car_washes_detailers');
-    const [customQuery, setCustomQuery] = useState('');
-    const [results, setResults] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(null);
+  // Input states
+  const [location, setLocation] = useState('');
+  const [selectedQuery, setSelectedQuery] = useState('car_washes_detailers');
+  const [customQuery, setCustomQuery] = useState('');
+  // Results states
+  const [results, setResults] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [inputError, setInputError] = useState(null);
+
+  // Defining the query options
+  const queryOptions = {
+    car_washes_detailers: '"Car washes and car detailers"',
+    car_dealers: '"Car washes"',
+    auto_repair: '"Gas stations and car parking lots"',
+    custom: "Custom Search..." 
+};
 
 
-    const queryOptions = {
-      car_washes_detailers: '"Car washes and car detailers"',
-      car_dealers: '"Car washes"',
-      auto_repair: '"Gas stations and car parking lots"',
-      custom: "Custom Search..." 
-  };
-
-
-  // Function to get the Search Query
+  // Get the Search Query
   const getSearchQuery = () => {
       if (selectedQuery === 'custom') {
         return `"${customQuery}" in`;
@@ -28,42 +31,62 @@ const SearchByLocation = ({backendUrl} ) => {
       return `${queryOptions[selectedQuery].toLowerCase()} in`;
   };
 
-    const handleSubmit = async (e) => {
-      e.preventDefault();
-      setIsLoading(true);
-      setResults(null);
-      setError(null);
+  // Vallidate the inputs
+  const validateInputs = () => {
+    setInputError(null);
+    
+    if (selectedQuery === 'custom' && customQuery.trim() === '') {
+        setInputError('Custom query cannot be empty');
+        return false;
+    }
+    if (location.trim() === '') {
+        setInputError('Location cannot be empty');
+        return false;
+    }
+    return true;
+  };
 
-      try {
-        const response = await fetch(`${backendUrl}/search_carwashes_regions`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({region: location, query: getSearchQuery()}),
-        });
-  
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-  
-        const data = await response.json();
-        // Check if the response data contains an error, set the error message accordingly
-        if (data.error) {
-          setError(data.error); 
-          setResults([data]); 
-        } else {
-          // No error, proceed to set the results
-          setResults(data);
-        }
-      } catch (error) {
-        setError('Failed to fetch car washes. Please try again.');
-        console.error('There was a problem with the fetch operation:', error);
-      } finally {
-        setIsLoading(false);
+  // Function to handle the form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!validateInputs()) {
+      return;
+    }
+    setIsLoading(true);
+    setResults(null);
+    setError(null);
+
+    try {
+      const response = await fetch(`${backendUrl}/search_carwashes_regions`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({region: location, query: getSearchQuery()}),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
       }
-    };
 
+      const data = await response.json();
+      // Check if the response data contains an error, set the error message accordingly
+      if (data.error) {
+        setError(data.error); 
+        setResults([data]); 
+      } else {
+        // No error, proceed to set the results
+        setResults(data);
+      }
+    } catch (error) {
+      setError('Failed to fetch car washes. Please try again.');
+      console.error('There was a problem with the fetch operation:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Handle the CSV download
   const handleDownloadCSV = () => {
       console.log("Downloading CSV");
       if (results && results.results) {
@@ -73,7 +96,7 @@ const SearchByLocation = ({backendUrl} ) => {
       }
   };
 
-  // Functiion to update the title of the results 
+  // Utils and State to update the title of the results 
   const [resultsTitleQuery, setResultsTitleQuery] = useState('');
   const [resultsTitleLocation, setResultsTitleLocation] = useState('');
 
@@ -153,6 +176,7 @@ const SearchByLocation = ({backendUrl} ) => {
                   className="appearance-none bg-white border border-gray-300 rounded-md shadow-sm w-full text-gray-700 py-2 px-3 leading-tight focus:outline-none focus:ring-0.5 focus:ring-charcoal focus:border-charcoal"
                 />
               </div>
+              {/* Search Button */}
               <div className="flex justify-center mt-6">
                 <button
                   type="submit"
@@ -173,12 +197,14 @@ const SearchByLocation = ({backendUrl} ) => {
                   )}
                 </button>
               </div>
+              {inputError && <p className="text-red-500 text-s italic text-center mt-2">{inputError}</p>}
               </div>
             </div>
           </form>
           {isLoading && <p className="text-center text-gray-700">Searching for {getSearchQuery()} "{location}"...</p>}
           {error && <p className="text-center text-red-500">{error}</p>}
         
+        {/* Results */}
         {results && (
           <div className="max-w-2xl mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <h2 className="text-xl font-bold text-charcoal">Results for {resultsTitleQuery} "{resultsTitleLocation}":</h2>
