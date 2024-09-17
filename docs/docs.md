@@ -191,5 +191,12 @@ Frontend:
 docker run -d   --name frontend  -p 80:80   -p 443:443   -v certbot-etc:/etc/letsencrypt  --network web image_name
 
 
+# Future Work
 
+4 ideas to build and improve on this application:
+1. Add an integrated map to display search results as pins in an area.
+   -  This could work with either the text search or the zip code search but would likley work much better with the text search.
+2. For the Text Search feature, incoorperate the [location bias](https://developers.google.com/maps/documentation/places/web-service/text-search#location-bias) or the [location restriction](https://developers.google.com/maps/documentation/places/web-service/text-search#location-restriction) parameter (we are not currently utilizing eiether). This would increase resolution and would likley work well with a visualization on a map as mentioned in #1. 
+3. For the zip code feature, we could probaly figure out a way to add in a method of automatically retrieving the size or population density of the zip codes we are searching. If we could programaitcally select the search readius that would be ideal. 
+4. As my clients busniess grows, it might make sense to use tools similar to the ones in this app to build out a robust dataset of car washes all over the united states. While its a good concept, this comes with many contraints/potential issues and is not neccesary at this time.
 
