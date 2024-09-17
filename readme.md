@@ -1,6 +1,7 @@
 # Overview
 
 **Summary:**
+
 This is the codebase for [qfresheners.com/leads](https://www.qfresheners.com/leads).
 
 The primary purpose of this application is to generate leads for a company that sells ancillary items to automotive businesses. The app allows sales people to quickly explore locations and generate long sheets of leads that can be used to contact businesses or fed into CRM tools.
