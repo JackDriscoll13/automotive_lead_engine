@@ -10,11 +10,13 @@ The intended user base is extremley small (2-4 people.)
 The application is publicly deployed for ease of use and because there is limited potnetial for abuse.
 
 **Tech Stack:** 
+
 The frontend is React JS, Tailwind CSS, and Chart JS (react-chart-js2) for the Analytics Chart. 
 
 The backend is built in python with FastApi. 
 
 **Core App:**
+
 This applicaiton uses 3 endpoints from the new Google Places API to collect information on businesses through different means. 
 
 The Location Search Feature uses the [text search](https://developers.google.com/maps/documentation/places/web-service/text-search) endpoint to find businesses given a text query and a location. This feature is built in a minimal way and is basically a glorified wrapper on the text search endpoint. 
