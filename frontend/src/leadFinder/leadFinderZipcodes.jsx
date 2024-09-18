@@ -323,9 +323,9 @@ const SearchByZipcodes = ({ backendUrl }) => {
                      )}
                 {results && (
                     <div className="bg-gray-100 p-4 h-[45vh] w-[40vw] rounded text-sm text-gray-700 overflow-x-aut shadow-md border-2 border-gray-300">
-                        <h2 className="text-xl font-semibold mb-2">Results:</h2>
+                        <h2 className="text-xl font-semibold">Results:</h2>
                         <p className="text-md font-semibold italic mb-2">Searched {results.num_zip_codes} zip codes, found {results.num_results} businesses in {results.exc_time} seconds.</p>
-                        <pre className="bg-gray-200 p-4 h-[30vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto text-left">
+                        <pre className="bg-gray-200 p-4 h-[28vh] rounded text-sm text-gray-700 overflow-x-auto overflow-y-auto text-left">
                             {JSON.stringify(results, null, 2)}
                         </pre>
                         {!error && (
